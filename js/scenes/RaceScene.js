@@ -8,6 +8,7 @@ import StarField from '../entities/StarField.js';
 import Spaceship from '../entities/Spaceship.js';
 import Station from '../entities/Station.js';
 import { createOpponents } from '../systems/AIOpponent.js';
+import cloudLeaderboard from '../systems/CloudLeaderboard.js';
 
 export default class RaceScene {
   constructor(game) {
@@ -367,6 +368,9 @@ export default class RaceScene {
 
     gameState.addBestScore(entry);
     gameState.clearRaceState(); // מירוץ הסתיים — מחיקת שמירה
+
+    // Submit to global cloud leaderboard (fire-and-forget)
+    cloudLeaderboard.submitScore(entry);
 
     setTimeout(() => {
       this.game.switchScene('results', {

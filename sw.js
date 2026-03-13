@@ -1,6 +1,6 @@
 // Service Worker — מירוץ הכוכבים — משחק אופליין
 
-const CACHE_NAME = 'star-race-v2';
+const CACHE_NAME = 'star-race-v3';
 
 const ASSETS = [
   './',
@@ -25,6 +25,8 @@ const ASSETS = [
   './js/systems/TimerSystem.js',
   './js/systems/AudioManager.js',
   './js/systems/AIOpponent.js',
+  './js/systems/CloudLeaderboard.js',
+  './js/firebaseConfig.js',
   './js/scenes/MenuScene.js',
   './js/scenes/SetupScene.js',
   './js/scenes/RaceScene.js',

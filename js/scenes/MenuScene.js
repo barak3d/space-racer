@@ -5,6 +5,7 @@ import StarField from '../entities/StarField.js';
 import audioManager from '../systems/AudioManager.js';
 import gameState from '../systems/GameState.js';
 import { GAME_SETTINGS, DIFFICULTY_LEVELS } from '../config.js';
+import cloudLeaderboard from '../systems/CloudLeaderboard.js';
 
 export default class MenuScene {
   constructor(game) {
@@ -157,23 +158,42 @@ export default class MenuScene {
   }
 
   _showLeaderboard() {
-    const leaderboard = gameState.getLeaderboard();
-
     const overlay = document.createElement('div');
     overlay.className = 'scene active';
     overlay.style.background = 'var(--overlay-bg)';
     overlay.style.zIndex = '50';
     overlay.style.overflow = 'auto';
 
-    let html = `<div style="max-width:550px;width:92%;text-align:center;">
-      <h2 style="color:var(--neon-gold);text-shadow:0 0 20px var(--neon-gold);">🏆 ${UI.leaderboard.title}</h2>`;
+    overlay.innerHTML = `
+      <div style="max-width:580px;width:92%;text-align:center;">
+        <h2 style="color:var(--neon-gold);text-shadow:0 0 20px var(--neon-gold);">🏆 ${UI.leaderboard.title}</h2>
 
-    if (leaderboard.length === 0) {
-      html += `<p style="color:var(--text-secondary);font-size:1.1rem;margin:40px 0;line-height:1.8;">
-        ${UI.leaderboard.noScores}
-      </p>`;
-    } else {
-      html += `<div class="leaderboard-table">
+        <div class="leaderboard-tabs" style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;">
+          <button id="tab-local" class="btn btn-small tab-active" style="flex:1;max-width:200px;">
+            ${UI.leaderboard.tabLocal}
+          </button>
+          <button id="tab-global" class="btn btn-small" style="flex:1;max-width:200px;opacity:0.7;border-color:var(--neon-gold);color:var(--neon-gold);">
+            ${UI.leaderboard.tabGlobal}
+          </button>
+        </div>
+
+        <div id="leaderboard-content"></div>
+
+        <button class="btn btn-small mt-md" id="btn-back-leaderboard">${UI.collection.back}</button>
+      </div>
+    `;
+
+    this.game.overlay.appendChild(overlay);
+
+    const contentEl = overlay.querySelector('#leaderboard-content');
+    const btnLocal = overlay.querySelector('#tab-local');
+    const btnGlobal = overlay.querySelector('#tab-global');
+
+    const renderTable = (entries) => {
+      if (!entries || entries.length === 0) {
+        return `<p style="color:var(--text-secondary);font-size:1.1rem;margin:40px 0;line-height:1.8;">${UI.leaderboard.noScores}</p>`;
+      }
+      let html = `<div class="leaderboard-table">
         <div class="leaderboard-header">
           <span>#</span>
           <span>${UI.leaderboard.player}</span>
@@ -181,15 +201,15 @@ export default class MenuScene {
           <span>${UI.leaderboard.level}</span>
           <span>${UI.leaderboard.date}</span>
         </div>`;
-
-      leaderboard.forEach((entry, i) => {
+      entries.forEach((entry, i) => {
         const rank = i + 1;
         const rankClass = rank === 1 ? 'first' : rank === 2 ? 'second' : rank === 3 ? 'third' : '';
         const score = entry.score || 0;
         const name = entry.playerName || '—';
-        const levelLabel = entry.difficultyLabel || (entry.difficulty ? (DIFFICULTY_LEVELS[entry.difficulty] ? DIFFICULTY_LEVELS[entry.difficulty].label : `${entry.difficulty}`) : '—');
+        const levelLabel = entry.difficultyLabel || (entry.difficulty
+          ? (DIFFICULTY_LEVELS[entry.difficulty] ? DIFFICULTY_LEVELS[entry.difficulty].label : `${entry.difficulty}`)
+          : '—');
         const date = entry.date || '—';
-
         html += `<div class="leaderboard-row ${rankClass}">
           <span class="leaderboard-rank ${rankClass}">${rank}</span>
           <span class="leaderboard-name">${name}</span>
@@ -198,20 +218,58 @@ export default class MenuScene {
           <span class="leaderboard-date">${date}</span>
         </div>`;
       });
-
       html += `</div>`;
-    }
+      return html;
+    };
 
-    html += `<button class="btn btn-small mt-md" id="btn-back-leaderboard">${UI.collection.back}</button>
-    </div>`;
+    const showLocal = () => {
+      btnLocal.style.opacity = '1';
+      btnLocal.classList.add('tab-active');
+      btnGlobal.style.opacity = '0.7';
+      btnGlobal.classList.remove('tab-active');
+      contentEl.innerHTML = renderTable(gameState.getLeaderboard());
+    };
 
-    overlay.innerHTML = html;
-    this.game.overlay.appendChild(overlay);
+    const showGlobal = async () => {
+      btnGlobal.style.opacity = '1';
+      btnGlobal.classList.add('tab-active');
+      btnLocal.style.opacity = '0.7';
+      btnLocal.classList.remove('tab-active');
+
+      if (!cloudLeaderboard.isConfigured()) {
+        contentEl.innerHTML = `<p style="color:var(--text-secondary);font-size:1rem;margin:32px 0;line-height:1.8;">
+          ${UI.leaderboard.globalNotConfigured}
+        </p>`;
+        return;
+      }
+
+      contentEl.innerHTML = `<p style="color:var(--text-secondary);font-size:1rem;margin:32px 0;">
+        ${UI.leaderboard.globalLoading}
+      </p>`;
+
+      const scores = await cloudLeaderboard.getTopScores();
+      // Guard: user may have closed the overlay while fetching scores from Firestore
+      if (!overlay.isConnected) return;
+
+      if (scores === null) {
+        contentEl.innerHTML = `<p style="color:var(--neon-red);font-size:1rem;margin:32px 0;">
+          ${UI.leaderboard.globalError}
+        </p>`;
+      } else {
+        contentEl.innerHTML = renderTable(scores);
+      }
+    };
+
+    btnLocal.addEventListener('click', () => { audioManager.play('click'); showLocal(); });
+    btnGlobal.addEventListener('click', () => { audioManager.play('click'); showGlobal(); });
 
     overlay.querySelector('#btn-back-leaderboard').addEventListener('click', () => {
       audioManager.play('click');
       overlay.remove();
     });
+
+    // Default: show local tab
+    showLocal();
   }
 
   _showCollection() {
