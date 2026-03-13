@@ -279,10 +279,8 @@ export default class MenuScene {
       // Guard: user may have closed the overlay while fetching scores from Firestore
       if (!overlay.isConnected) return;
 
-      if (scores === null) {
-        contentEl.innerHTML = `<p style="color:var(--neon-red);font-size:1rem;margin:32px 0;">
-          ${UI.leaderboard.globalError}
-        </p>`;
+      if (scores === null || scores.length === 0) {
+        contentEl.innerHTML = renderTable([]);
       } else {
         contentEl.innerHTML = renderTable(scores);
       }
