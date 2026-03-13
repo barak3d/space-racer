@@ -33,6 +33,7 @@ class Game {
     const [
       { default: MenuScene },
       { default: SetupScene },
+      { default: PracticeTypeScene },
       { default: RaceScene },
       { default: StationScene },
       { default: PuzzleScene },
@@ -40,6 +41,7 @@ class Game {
     ] = await Promise.all([
       import('./scenes/MenuScene.js'),
       import('./scenes/SetupScene.js'),
+      import('./scenes/PracticeTypeScene.js'),
       import('./scenes/RaceScene.js'),
       import('./scenes/StationScene.js'),
       import('./scenes/PuzzleScene.js'),
@@ -49,6 +51,7 @@ class Game {
     this.scenes = {
       menu: new MenuScene(this),
       setup: new SetupScene(this),
+      practiceType: new PracticeTypeScene(this),
       race: new RaceScene(this),
       station: new StationScene(this),
       puzzle: new PuzzleScene(this),
