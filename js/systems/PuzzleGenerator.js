@@ -158,34 +158,71 @@ function generateMultiplication(level, station) {
   );
 }
 
-// === השוואת מספרים ===
+// === השוואת תרגילים ===
 function generateComparison(level, station) {
   const cfg = DIFFICULTY_LEVELS[level];
   if (!cfg.comparison) return null;
 
   const { min, max } = getScaledRange(cfg, 'comparison', station);
-  const a = randInt(min, max);
-  let b;
-  do { b = randInt(min, max); } while (b === a);
+  const ops = cfg.comparison.ops || ['+'];
+  // Pick a single operator for both expressions so the student focuses on one operation
+  let op = ops[Math.floor(Math.random() * ops.length)];
+  // Fall back to addition if the subtraction range is too narrow for variety
+  if (op === '-' && max < min + 3) op = '+';
+
+  let exprA, exprB, valA, valB;
+  let attempts = 0;
+
+  do {
+    let a, b, c, d;
+    if (op === '-') {
+      // Ensure non-negative results: a > b and c > d
+      a = randInt(Math.max(min + 1, 2), max);
+      b = randInt(min, a - 1);
+      c = randInt(Math.max(min + 1, 2), max);
+      d = randInt(min, c - 1);
+    } else {
+      a = randInt(min, max);
+      b = randInt(min, max);
+      c = randInt(min, max);
+      d = randInt(min, max);
+    }
+    valA = op === '+' ? a + b : a - b;
+    valB = op === '+' ? c + d : c - d;
+    exprA = `${a} ${op} ${b}`;
+    exprB = `${c} ${op} ${d}`;
+    attempts++;
+  } while (valA === valB && attempts < 50);
+
+  // Guaranteed fallback for the extremely rare case all attempts produced equal values
+  if (valA === valB) {
+    const a = randInt(min, max);
+    const b = randInt(min, max);
+    const adjustedB = b < max ? b + 1 : b - 1;
+    exprA = `${a} + ${b}`;
+    exprB = `${a} + ${adjustedB}`;
+    valA = a + b;
+    valB = a + adjustedB;
+  }
 
   const askBigger = Math.random() > 0.5;
-  const question = askBigger
-    ? `מִי גָּדוֹל יוֹתֵר?\n${a}  אוֹ  ${b}`
-    : `מִי קָטָן יוֹתֵר?\n${a}  אוֹ  ${b}`;
   const questionDisplay = askBigger ? 'מִי גָּדוֹל יוֹתֵר?' : 'מִי קָטָן יוֹתֵר?';
+  const question = `${questionDisplay}\n${exprA}  אוֹ  ${exprB}`;
 
-  const correct = askBigger ? Math.max(a, b) : Math.min(a, b);
+  const correctExpr = askBigger
+    ? (valA > valB ? exprA : exprB)
+    : (valA < valB ? exprA : exprB);
 
-  // Options: only the two numbers being compared
-  const options = shuffle([a, b]);
-  const correctIndex = options.indexOf(correct);
+  // Options: the two expressions being compared
+  const options = shuffle([exprA, exprB]);
+  const correctIndex = options.indexOf(correctExpr);
 
   const timeLimit = cfg.timePerPuzzle + STATION_TIME_OFFSET[station - 1];
   return buildPuzzle(
     'comparison',
     question,
     questionDisplay,
-    correct,
+    correctExpr,
     options,
     correctIndex,
     level,
