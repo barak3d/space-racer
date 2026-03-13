@@ -1,7 +1,7 @@
 // StationScene.js — מסך תחנה — בחירת סוג חידה
 
 import UI from '../data/uiStrings.js';
-import { PUZZLE_TYPES, GAME_SETTINGS, STATION_THEMES } from '../config.js';
+import { PUZZLE_TYPES, GAME_SETTINGS, STATION_THEMES, GAME_MODES } from '../config.js';
 import gameState from '../systems/GameState.js';
 import audioManager from '../systems/AudioManager.js';
 
@@ -11,6 +11,7 @@ export default class StationScene {
     this.ui = null;
     this.stationNum = 1;
     this.puzzlesLeft = GAME_SETTINGS.puzzlesPerStation;
+    this.autoAdvanceTimer_ = null;
   }
 
   enter(data = {}) {
@@ -26,6 +27,14 @@ export default class StationScene {
       return;
     }
 
+    if (state.gameMode === GAME_MODES.competition) {
+      this._enterCompetitionMode(data, state);
+    } else {
+      this._enterPracticeMode(data, state);
+    }
+  }
+
+  _enterPracticeMode(data, state) {
     const level = state.difficultyLevel || 1;
     const theme = STATION_THEMES[this.stationNum - 1] || STATION_THEMES[0];
 
@@ -81,10 +90,57 @@ export default class StationScene {
     });
   }
 
+  _enterCompetitionMode(data, state) {
+    const nextType = gameState.getNextCompetitionPuzzle();
+    const puzzleType = PUZZLE_TYPES[nextType] || PUZZLE_TYPES.addition;
+    const theme = STATION_THEMES[this.stationNum - 1] || STATION_THEMES[0];
+
+    this.ui = this.game.createSceneUI();
+
+    const stationLabel = UI.station.stationOf
+      .replace('{current}', this.stationNum)
+      .replace('{total}', GAME_SETTINGS.totalStations);
+
+    this.ui.innerHTML = `
+      <div class="flex-col gap-lg fade-in-up" style="max-width:550px;width:90%;">
+        <div class="station-header">
+          <div class="station-zone-name" style="color:${theme.accentColor};text-shadow:0 0 12px ${theme.accentColor}">${theme.name}</div>
+          <div class="station-number" style="border-color:${theme.accentColor};box-shadow:0 0 15px ${theme.accentColor};color:${theme.accentColor}">${this.stationNum}</div>
+          <h2>${UI.station.title}</h2>
+          <div class="game-subtitle">${stationLabel}</div>
+        </div>
+
+        <div class="competition-puzzle-preview">
+          <div class="preview-label">${UI.station.autoSelected}</div>
+          <div class="preview-icon">${puzzleType.icon}</div>
+          <div class="preview-name">${puzzleType.name}</div>
+        </div>
+
+        <div class="puzzles-remaining">
+          ${UI.station.puzzlesLeft} <strong>${this.puzzlesLeft}</strong>
+        </div>
+      </div>
+    `;
+
+    // Auto-advance to puzzle after 1 second
+    this.autoAdvanceTimer_ = setTimeout(() => {
+      this.autoAdvanceTimer_ = null;
+      this.game.switchScene('puzzle', {
+        puzzleType: nextType,
+        station: this.stationNum,
+        puzzlesLeft: this.puzzlesLeft,
+      });
+    }, 1000);
+  }
+
   update(dt) {}
   render(ctx, w, h) {}
 
   exit() {
+    if (this.autoAdvanceTimer_) {
+      clearTimeout(this.autoAdvanceTimer_);
+      this.autoAdvanceTimer_ = null;
+    }
     this.game.removeSceneUI(this.ui);
     this.ui = null;
   }

@@ -29,6 +29,11 @@ const UI = {
     grade3: 'כִּתָּה ג\'',
     startButton: 'קָדִימָה לַמֵּרוֹץ!',
     nameRequired: 'צָרִיךְ לְהַכְנִיס שֵׁם!',
+    chooseMode: 'בְּחַר מַצָּב מִשְׂחָק:',
+    modePractice: 'תִּרְגּוּל',
+    modePracticeDesc: 'בְּחַר בְּעַצְמְךָ אֵיזוֹ חִידָה לְתַרְגֵּל',
+    modeCompetition: 'תַּחֲרוּת',
+    modeCompetitionDesc: 'הַמַּעֲרֶכֶת בּוֹחֶרֶת — נִקּוּד עוֹלָמִי!',
   },
 
   // מירוץ
@@ -54,6 +59,7 @@ const UI = {
     stationOf: 'תַּחֲנָה {current} מִתּוֹךְ {total}',
     locked: 'נָעוּל',
     notAvailable: 'לֹא זָמִין בְּכִתָּה זוֹ',
+    autoSelected: 'הַחִידָה הַבָּאָה:',
   },
 
   // חידות

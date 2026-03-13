@@ -489,6 +489,96 @@
   min-height: 1.2em;
 }
 
+/* === Mode Picker === */
+.mode-picker {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.mode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  min-height: 100px;
+  padding: 12px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  gap: 4px;
+}
+
+.mode-card:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+.mode-card.selected {
+  border-color: var(--neon-gold);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  background: rgba(255, 215, 0, 0.05);
+}
+
+.mode-icon {
+  font-size: 1.8rem;
+}
+
+.mode-name {
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.mode-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* === Competition Puzzle Preview === */
+.competition-puzzle-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 16px;
+  background: rgba(255, 215, 0, 0.04);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: var(--radius-lg);
+  animation: competition-glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes competition-glow {
+  from { box-shadow: 0 0 10px rgba(255, 215, 0, 0.15); }
+  to   { box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); }
+}
+
+.preview-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.preview-icon {
+  font-size: 3rem;
+}
+
+.preview-name {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--neon-gold);
+  text-shadow: 0 0 12px var(--neon-gold);
+}
+
 /* === Collection Screen === */
 .collection-grid {
   display: grid;
