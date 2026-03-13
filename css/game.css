@@ -545,6 +545,15 @@
   background: rgba(255, 215, 0, 0.08);
 }
 
+/* === Practice Type Scene Nav Buttons === */
+.setup-nav-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
 /* === Mode Picker === */
 .mode-picker {
   display: flex;

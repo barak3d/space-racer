@@ -1,7 +1,7 @@
 // SetupScene.js — מסך הגדרות
 
 import UI from '../data/uiStrings.js';
-import { SHIP_COLORS, DIFFICULTY_LEVELS, GAME_MODES, PUZZLE_TYPES } from '../config.js';
+import { SHIP_COLORS, DIFFICULTY_LEVELS, GAME_MODES } from '../config.js';
 import gameState from '../systems/GameState.js';
 import audioManager from '../systems/AudioManager.js';
 
@@ -12,14 +12,12 @@ export default class SetupScene {
     this.selectedColor = SHIP_COLORS[0].color;
     this.selectedLevel = 1;
     this.selectedMode = GAME_MODES.practice;
-    this.selectedPracticeType = null;
     this.editingProfile = false;
   }
 
   enter() {
     const state = gameState.getState();
-    this.selectedMode = GAME_MODES.practice;
-    this.selectedPracticeType = null;
+    this.selectedMode = state.gameMode || GAME_MODES.practice;
     this.editingProfile = false;
 
     if (gameState.hasPlayerProfile()) {
@@ -41,7 +39,6 @@ export default class SetupScene {
 
     const state = gameState.getState();
     const hasProfile = gameState.hasPlayerProfile() && !this.editingProfile;
-    const isPractice = this.selectedMode === GAME_MODES.practice;
 
     this.ui.innerHTML = `
       <div class="setup-container fade-in-up">
@@ -109,25 +106,6 @@ export default class SetupScene {
           </div>
         </div>
 
-        <div class="setup-section" id="practice-type-section" style="${isPractice ? '' : 'display:none;'}">
-          <h3>${UI.setup.choosePracticeType}</h3>
-          <div class="practice-type-picker" id="practice-type-picker">
-            ${Object.values(PUZZLE_TYPES).map(pt => {
-              const disabled = pt.availableFrom > this.selectedLevel;
-              const selected = this.selectedPracticeType === pt.id;
-              return `
-                <button class="puzzle-type-card ${disabled ? 'disabled' : ''} ${selected ? 'selected' : ''}"
-                  data-type="${pt.id}" ${disabled ? 'disabled' : ''}>
-                  <span class="puzzle-type-icon">${pt.icon}</span>
-                  <span class="puzzle-type-name">${pt.name}</span>
-                  ${disabled ? `<span style="font-size:0.7rem;color:var(--text-dim)">${UI.station.notAvailable}</span>` : ''}
-                </button>
-              `;
-            }).join('')}
-          </div>
-          <div class="setup-error" id="practice-type-error"></div>
-        </div>
-
         <button class="btn btn-big pulse" id="btn-go">
           ${UI.setup.startButton} 🚀
         </button>
@@ -167,8 +145,6 @@ export default class SetupScene {
         levelCards.forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.selectedLevel = parseInt(card.dataset.level);
-        // Refresh practice type section to reflect level-based availability
-        this._refreshPracticeTypes();
       });
     });
 
@@ -180,59 +156,13 @@ export default class SetupScene {
         modeCards.forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.selectedMode = card.dataset.mode;
-        const section = this.ui.querySelector('#practice-type-section');
-        if (section) {
-          section.style.display = this.selectedMode === GAME_MODES.practice ? '' : 'none';
-        }
       });
     });
-
-    // Practice type selection
-    this._bindPracticeTypeEvents();
 
     // Go button
     this.ui.querySelector('#btn-go').addEventListener('click', () => {
       this._onStart(hasProfile);
     });
-  }
-
-  _bindPracticeTypeEvents() {
-    const ptButtons = this.ui.querySelectorAll('#practice-type-picker .puzzle-type-card:not(.disabled)');
-    ptButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        audioManager.play('click');
-        ptButtons.forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        this.selectedPracticeType = btn.dataset.type;
-        const err = this.ui.querySelector('#practice-type-error');
-        if (err) err.textContent = '';
-      });
-    });
-  }
-
-  _refreshPracticeTypes() {
-    const picker = this.ui.querySelector('#practice-type-picker');
-    if (!picker) return;
-
-    // Rebuild practice type buttons based on new level
-    picker.innerHTML = Object.values(PUZZLE_TYPES).map(pt => {
-      const disabled = pt.availableFrom > this.selectedLevel;
-      const selected = this.selectedPracticeType === pt.id;
-      // Deselect if the current type becomes unavailable
-      if (disabled && this.selectedPracticeType === pt.id) {
-        this.selectedPracticeType = null;
-      }
-      return `
-        <button class="puzzle-type-card ${disabled ? 'disabled' : ''} ${selected && !disabled ? 'selected' : ''}"
-          data-type="${pt.id}" ${disabled ? 'disabled' : ''}>
-          <span class="puzzle-type-icon">${pt.icon}</span>
-          <span class="puzzle-type-name">${pt.name}</span>
-          ${disabled ? `<span style="font-size:0.7rem;color:var(--text-dim)">${UI.station.notAvailable}</span>` : ''}
-        </button>
-      `;
-    }).join('');
-
-    this._bindPracticeTypeEvents();
   }
 
   _onStart(hasProfile) {
@@ -258,13 +188,6 @@ export default class SetupScene {
       level = this.selectedLevel;
     }
 
-    if (this.selectedMode === GAME_MODES.practice && !this.selectedPracticeType) {
-      const error = this.ui.querySelector('#practice-type-error');
-      if (error) error.textContent = UI.setup.practiceTypeRequired;
-      audioManager.play('wrong');
-      return;
-    }
-
     audioManager.play('boost');
 
     gameState.reset();
@@ -274,10 +197,10 @@ export default class SetupScene {
     gameState.setGameMode(this.selectedMode);
 
     if (this.selectedMode === GAME_MODES.practice) {
-      gameState.setPracticeType(this.selectedPracticeType);
+      this.game.switchScene('practiceType');
+    } else {
+      this.game.switchScene('race');
     }
-
-    this.game.switchScene('race');
   }
 
   update(dt) {}
