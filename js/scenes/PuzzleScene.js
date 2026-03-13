@@ -54,7 +54,7 @@ export default class PuzzleScene {
         <div class="answer-grid" id="answers">
           ${this.puzzle.options.map((opt, i) => `
             <button class="answer-btn" data-index="${i}">
-              ${opt}
+              ${this._formatOption(opt)}
             </button>
           `).join('')}
         </div>
@@ -85,6 +85,14 @@ export default class PuzzleScene {
         this._onAnswer(index);
       });
     });
+  }
+
+  _formatOption(opt) {
+    // Math expression options (e.g. "8 + 3") must render left-to-right
+    if (typeof opt === 'string' && /\d[\s]*[\+\-×][\s]*\d/.test(opt)) {
+      return `<span dir="ltr" style="unicode-bidi:bidi-override;">${opt}</span>`;
+    }
+    return opt;
   }
 
   _formatQuestion(question) {
