@@ -80,23 +80,33 @@ async function submitScore(entry) {
 }
 
 // Fetch the top global scores. Returns null when not available.
-// When difficulty is provided, filters to that grade only (requires composite index).
+// When difficulty is provided, results are filtered client-side to avoid
+// requiring a Firestore composite index.
 async function getTopScores(limitCount = GLOBAL_LEADERBOARD_LIMIT, difficulty = null) {
   const ready = await _ensureInitialized();
   if (!ready) return null;
 
   try {
-    const { collection, query, orderBy, limit, getDocs, where } =
+    const { collection, query, orderBy, limit, getDocs } =
       await import(`${FIREBASE_SDK}/firebase-firestore.js`);
 
-    const constraints = [orderBy('score', 'desc'), limit(limitCount)];
+    // Fetch more results when filtering so we still return enough after
+    // removing non-matching entries. Cap at 100 to keep reads bounded.
+    const fetchLimit = difficulty !== null ? Math.min(limitCount * 5, 100) : limitCount;
+
+    const q = query(
+      collection(_db, COLLECTION_NAME),
+      orderBy('score', 'desc'),
+      limit(fetchLimit),
+    );
+    const snapshot = await getDocs(q);
+    let results = snapshot.docs.map(doc => doc.data());
+
     if (difficulty !== null) {
-      constraints.unshift(where('difficulty', '==', difficulty));
+      results = results.filter(entry => entry.difficulty === difficulty).slice(0, limitCount);
     }
 
-    const q = query(collection(_db, COLLECTION_NAME), ...constraints);
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => doc.data());
+    return results;
   } catch (e) {
     console.warn('Cloud leaderboard: getTopScores failed —', e.message);
     return null;
