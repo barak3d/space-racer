@@ -171,20 +171,8 @@ function generateComparison(level, station) {
 
   const correct = askBigger ? Math.max(a, b) : Math.min(a, b);
 
-  // Options: the two numbers plus 2 distractors from the same range
-  const distractor1 = randInt(min, max);
-  let distractor2;
-  do { distractor2 = randInt(min, max); } while (distractor2 === distractor1 || distractor2 === a || distractor2 === b);
-
-  const optionsSet = new Set([a, b, distractor1, distractor2]);
-  let options = [...optionsSet].slice(0, 4);
-  if (options.length < 4) {
-    while (options.length < 4) {
-      const extra = randInt(min, max);
-      if (!options.includes(extra)) options.push(extra);
-    }
-  }
-  options = shuffle(options);
+  // Options: only the two numbers being compared
+  const options = shuffle([a, b]);
   const correctIndex = options.indexOf(correct);
 
   const timeLimit = cfg.timePerPuzzle + STATION_TIME_OFFSET[station - 1];
