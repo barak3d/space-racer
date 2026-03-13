@@ -68,12 +68,13 @@
 // Leave all values as empty strings to run in local-only mode (no cloud sync).
 
 const FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
+  // Domain-restricted API key (restricted to https://barak3d.github.io/* in Google Cloud Console)
+  apiKey: "AIzaSyBDqvv82aBViHmSDu2dgQ3JGNbNTqflMqE",
+  authDomain: "space-racer-7d447.firebaseapp.com",
+  projectId: "space-racer-7d447",
+  storageBucket: "space-racer-7d447.firebasestorage.app",
+  messagingSenderId: "836177941752",
+  appId: "1:836177941752:web:8bffb1aa3f8c86ac19970d",
 };
 
 export default FIREBASE_CONFIG;
