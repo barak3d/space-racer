@@ -163,6 +163,9 @@ export default class MenuScene {
     overlay.style.background = 'var(--overlay-bg)';
     overlay.style.zIndex = '50';
     overlay.style.overflow = 'auto';
+    overlay.style.justifyContent = 'flex-start';
+    overlay.style.paddingTop = '40px';
+    overlay.style.paddingBottom = '40px';
 
     overlay.innerHTML = `
       <div style="max-width:580px;width:92%;text-align:center;">
