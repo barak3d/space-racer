@@ -16,6 +16,9 @@ const DEFAULT_STATE = {
   bestScores: [],
   streak: 0,
   inProgress: false, // האם יש משחק פעיל?
+  gameMode: 'practice',
+  competitionPuzzleOrder: [],
+  competitionPuzzleIndex: 0,
 };
 
 class GameState {
@@ -114,6 +117,26 @@ class GameState {
   setDifficultyLevel(level) {
     this.state.difficultyLevel = level;
     this.save();
+  }
+
+  setGameMode(mode) {
+    this.state.gameMode = mode;
+    this.save();
+  }
+
+  setCompetitionPuzzleOrder(order) {
+    this.state.competitionPuzzleOrder = order;
+    this.state.competitionPuzzleIndex = 0;
+    this.save();
+  }
+
+  getNextCompetitionPuzzle() {
+    const order = this.state.competitionPuzzleOrder;
+    if (!order || order.length === 0) return 'addition';
+    const idx = this.state.competitionPuzzleIndex % order.length;
+    this.state.competitionPuzzleIndex = (idx + 1) % order.length;
+    this.save();
+    return order[idx];
   }
 
   setCurrentStation(station) {

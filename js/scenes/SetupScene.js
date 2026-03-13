@@ -1,7 +1,7 @@
 // SetupScene.js — מסך הגדרות
 
 import UI from '../data/uiStrings.js';
-import { SHIP_COLORS, DIFFICULTY_LEVELS } from '../config.js';
+import { SHIP_COLORS, DIFFICULTY_LEVELS, GAME_MODES } from '../config.js';
 import gameState from '../systems/GameState.js';
 import audioManager from '../systems/AudioManager.js';
 
@@ -11,11 +11,13 @@ export default class SetupScene {
     this.ui = null;
     this.selectedColor = SHIP_COLORS[0].color;
     this.selectedLevel = 1;
+    this.selectedMode = GAME_MODES.practice;
   }
 
   enter() {
     this.selectedColor = SHIP_COLORS[0].color;
     this.selectedLevel = 1;
+    this.selectedMode = GAME_MODES.practice;
 
     this.ui = this.game.createSceneUI();
     this.ui.innerHTML = `
@@ -54,6 +56,22 @@ export default class SetupScene {
           </div>
         </div>
 
+        <div class="setup-section">
+          <h3>${UI.setup.chooseMode}</h3>
+          <div class="mode-picker" id="mode-picker">
+            <div class="mode-card selected" data-mode="${GAME_MODES.practice}">
+              <div class="mode-icon">🎯</div>
+              <div class="mode-name">${UI.setup.modePractice}</div>
+              <div class="mode-desc">${UI.setup.modePracticeDesc}</div>
+            </div>
+            <div class="mode-card" data-mode="${GAME_MODES.competition}">
+              <div class="mode-icon">🏆</div>
+              <div class="mode-name">${UI.setup.modeCompetition}</div>
+              <div class="mode-desc">${UI.setup.modeCompetitionDesc}</div>
+            </div>
+          </div>
+        </div>
+
         <button class="btn btn-big pulse" id="btn-go">
           ${UI.setup.startButton} 🚀
         </button>
@@ -82,6 +100,17 @@ export default class SetupScene {
       });
     });
 
+    // Mode selection
+    const modeCards = this.ui.querySelectorAll('.mode-card');
+    modeCards.forEach(card => {
+      card.addEventListener('click', () => {
+        audioManager.play('click');
+        modeCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        this.selectedMode = card.dataset.mode;
+      });
+    });
+
     // Go button
     this.ui.querySelector('#btn-go').addEventListener('click', () => {
       const nameInput = this.ui.querySelector('#name-input');
@@ -101,6 +130,7 @@ export default class SetupScene {
       gameState.setPlayerName(name);
       gameState.setSelectedColor(this.selectedColor);
       gameState.setDifficultyLevel(this.selectedLevel);
+      gameState.setGameMode(this.selectedMode);
 
       this.game.switchScene('race');
     });

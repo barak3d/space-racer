@@ -65,6 +65,11 @@ export const PUZZLE_TYPES = {
   words: { id: 'words', name: 'מִלִּים', icon: '📖', availableFrom: 1 },
 };
 
+export const GAME_MODES = {
+  practice: 'practice',
+  competition: 'competition',
+};
+
 // Station difficulty scaling — station 1 (warm-up) to station 5 (hardest)
 // Steeper curve: station 1 is easy, station 5 is a real challenge
 export const STATION_SCALE = [0.3, 0.5, 0.7, 0.9, 1.0];

@@ -1,7 +1,7 @@
 // RaceScene.js — מסך מירוץ ראשי
 
 import UI from '../data/uiStrings.js';
-import { COLORS, GAME_SETTINGS, DIFFICULTY_LEVELS, STATION_THEMES } from '../config.js';
+import { COLORS, GAME_SETTINGS, DIFFICULTY_LEVELS, STATION_THEMES, PUZZLE_TYPES, GAME_MODES } from '../config.js';
 import gameState from '../systems/GameState.js';
 import audioManager from '../systems/AudioManager.js';
 import StarField from '../entities/StarField.js';
@@ -108,6 +108,27 @@ export default class RaceScene {
 
     // Apply initial theme
     this._applyTheme(0);
+
+    // Build competition puzzle order if needed
+    if (state.gameMode === GAME_MODES.competition) {
+      const level = state.difficultyLevel || 1;
+      const availableTypes = Object.values(PUZZLE_TYPES)
+        .filter(pt => pt.availableFrom <= level)
+        .map(pt => pt.id);
+      const totalPuzzles = GAME_SETTINGS.totalStations * GAME_SETTINGS.puzzlesPerStation;
+      const order = [];
+      while (order.length < totalPuzzles) {
+        // Fisher-Yates shuffle of available types
+        const shuffled = [...availableTypes];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        order.push(...shuffled);
+      }
+      order.length = totalPuzzles;
+      gameState.setCompetitionPuzzleOrder(order);
+    }
 
     // סימון שהמירוץ התחיל
     gameState.state.inProgress = true;
@@ -364,13 +385,16 @@ export default class RaceScene {
       difficultyLabel: levelInfo ? levelInfo.label : `${difficulty}`,
       date: dateStr,
       accuracy: Math.round(gameState.getAccuracy()),
+      gameMode: state.gameMode || GAME_MODES.practice,
     };
 
     gameState.addBestScore(entry);
     gameState.clearRaceState(); // מירוץ הסתיים — מחיקת שמירה
 
-    // Submit to global cloud leaderboard (fire-and-forget)
-    cloudLeaderboard.submitScore(entry);
+    // Submit to global cloud leaderboard only in competition mode (fire-and-forget)
+    if (state.gameMode === GAME_MODES.competition) {
+      cloudLeaderboard.submitScore(entry);
+    }
 
     setTimeout(() => {
       this.game.switchScene('results', {

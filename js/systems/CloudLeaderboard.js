@@ -62,6 +62,9 @@ async function submitScore(entry) {
     const dateRaw = String(entry.date || '');
     const date = /^\d{2}\/\d{2}\/\d{4}$/.test(dateRaw) ? dateRaw : '';
 
+    // Validate gameMode
+    const gameMode = entry.gameMode === 'competition' ? 'competition' : 'practice';
+
     await addDoc(collection(_db, COLLECTION_NAME), {
       score,
       playerName,
@@ -69,6 +72,7 @@ async function submitScore(entry) {
       difficultyLabel,
       date,
       accuracy,
+      gameMode,
       // Use a server-generated timestamp to prevent client-side manipulation
       timestamp: serverTimestamp(),
     });
