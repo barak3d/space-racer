@@ -34,6 +34,10 @@ const UI = {
     modePracticeDesc: 'בְּחַר בְּעַצְמְךָ אֵיזוֹ חִידָה לְתַרְגֵּל',
     modeCompetition: 'תַּחֲרוּת',
     modeCompetitionDesc: 'הַמַּעֲרֶכֶת בּוֹחֶרֶת — נִקּוּד עוֹלָמִי!',
+    choosePracticeType: 'בְּחַר מָה לְתַרְגֵּל:',
+    practiceTypeRequired: 'צָרִיךְ לִבְחֹר סוּג תִּרְגּוּל!',
+    playingAs: 'מְשַׂחֵק בְּתוֹר:',
+    changePlayer: 'שְׁנֵה שֵׁם וְכִתָּה',
   },
 
   // מירוץ
@@ -60,6 +64,7 @@ const UI = {
     locked: 'נָעוּל',
     notAvailable: 'לֹא זָמִין בְּכִתָּה זוֹ',
     autoSelected: 'הַחִידָה הַבָּאָה:',
+    practiceSelected: 'מְתַרְגְּלִים:',
   },
 
   // חידות

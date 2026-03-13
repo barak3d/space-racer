@@ -489,6 +489,62 @@
   min-height: 1.2em;
 }
 
+/* === Player Profile Card (Setup) === */
+.player-profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px;
+  background: rgba(0, 255, 255, 0.05);
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.1);
+}
+
+.profile-playing-as {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.profile-name-display {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 12px var(--neon-cyan);
+}
+
+.profile-grade-display {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.profile-change-btn {
+  margin-top: 4px;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+/* === Practice Type Picker (Setup) === */
+.practice-type-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.practice-type-picker .puzzle-type-card.selected {
+  border-color: var(--neon-gold);
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.4);
+  background: rgba(255, 215, 0, 0.08);
+}
+
 /* === Mode Picker === */
 .mode-picker {
   display: flex;
