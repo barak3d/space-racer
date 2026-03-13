@@ -1,7 +1,12 @@
 // PuzzleGenerator.js — מחולל חידות לכל 6 הסוגים
 
 import { DIFFICULTY_LEVELS, PUZZLE_TYPES, STATION_SCALE, STATION_TIME_OFFSET } from '../config.js';
-import { getRandomWord } from '../data/hebrewWords.js';
+import { getRandomWord, getAllWords } from '../data/hebrewWords.js';
+
+// Pre-compute base-letter forms of every word in the bank once at module load.
+// Used by generateWordPuzzle to reject wrong-letter candidates that would form
+// another valid word when placed at the blank position.
+const ALL_BASE_WORD_FORMS = new Set(getAllWords().map(w => w.word.replace(/[\u0591-\u05C7]/g, '')));
 
 // Scale number ranges by station: station 1 = warm-up (30%), station 5 = full difficulty (100%)
 // Also raises the minimum operand so later stations produce bigger numbers
@@ -276,12 +281,18 @@ function generateWordPuzzle(level, station) {
   const questionDisplay = 'הַשְׁלֵם אֶת הָאוֹת הַחֲסֵרָה';
 
   // Generate wrong letters (base letters without nikud as answer options)
+  // Skip any candidate that would turn the blank into another known word.
+  const wouldFormKnownWord = (candidate) => {
+    const testBase = graphemes.map((g, i) => (i === letterIndex ? candidate : baseLetter(g))).join('');
+    return ALL_BASE_WORD_FORMS.has(testBase);
+  };
+
   const hebrewLetters = 'אבגדהוזחטיכלמנסעפצקרשת';
   const wrongLetters = new Set();
   let attempts = 0;
-  while (wrongLetters.size < 3 && attempts < 50) {
+  while (wrongLetters.size < 3 && attempts < 100) {
     const letter = hebrewLetters[Math.floor(Math.random() * hebrewLetters.length)];
-    if (letter !== missingBase) wrongLetters.add(letter);
+    if (letter !== missingBase && !wouldFormKnownWord(letter)) wrongLetters.add(letter);
     attempts++;
   }
 
