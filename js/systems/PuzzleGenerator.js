@@ -3,13 +3,17 @@
 import { DIFFICULTY_LEVELS, PUZZLE_TYPES, STATION_SCALE, STATION_TIME_OFFSET } from '../config.js';
 import { getRandomWord } from '../data/hebrewWords.js';
 
-// Scale number ranges by station: station 1 = warm-up (40%), station 5 = full difficulty (100%)
+// Scale number ranges by station: station 1 = warm-up (30%), station 5 = full difficulty (100%)
+// Also raises the minimum operand so later stations produce bigger numbers
 function getScaledRange(cfg, type, station) {
   const base = cfg[type];
   if (!base || typeof base === 'string') return base; // words = 'easy'/'medium'/'hard'
   const scale = STATION_SCALE[Math.max(0, Math.min(station - 1, STATION_SCALE.length - 1))];
   const scaledMax = Math.max(base.min + 1, Math.floor(base.max * scale));
-  return { ...base, min: base.min, max: scaledMax };
+  // Raise the floor: station 1 keeps original min, later stations start higher
+  const floorScale = Math.max(0, (station - 1) / 8); // 0, 0.125, 0.25, 0.375, 0.5
+  const scaledMin = Math.max(base.min, Math.floor(scaledMax * floorScale));
+  return { min: scaledMin, max: scaledMax };
 }
 
 function randInt(min, max) {
@@ -64,8 +68,15 @@ function generateAddition(level, station) {
   if (!cfg.addition) return null;
 
   const { min, max } = getScaledRange(cfg, 'addition', station);
-  const a = randInt(min, Math.floor(max / 2));
-  const b = randInt(min, max - a);
+  // Pick a target sum first (between min*2 and max), then split it into two operands
+  const targetMin = min + min;
+  const targetMax = max;
+  const target = randInt(Math.min(targetMin, targetMax), targetMax);
+  // Split target into a and b, both at least 1
+  const aMin = Math.max(1, Math.floor(target * 0.2));
+  const aMax = Math.min(target - 1, Math.floor(target * 0.8));
+  const a = randInt(aMin, aMax);
+  const b = target - a;
   const correct = a + b;
 
   const wrongs = generateWrongAnswers(correct, 3, 0, max + 10);
@@ -91,7 +102,9 @@ function generateSubtraction(level, station) {
   if (!cfg.subtraction) return null;
 
   const { min, max } = getScaledRange(cfg, 'subtraction', station);
-  const a = randInt(Math.floor(max / 3), max);
+  // a is big (upper half of range), b is from min up to a
+  const lowerBound = Math.max(min, Math.floor(max / 2));
+  const a = randInt(lowerBound, max);
   const b = randInt(min, a); // ensure positive result
   const correct = a - b;
 
@@ -157,7 +170,7 @@ function generateComparison(level, station) {
 
   const correct = askBigger ? Math.max(a, b) : Math.min(a, b);
 
-  // Options: the two numbers plus 2 distractors
+  // Options: the two numbers plus 2 distractors from the same range
   const distractor1 = randInt(min, max);
   let distractor2;
   do { distractor2 = randInt(min, max); } while (distractor2 === distractor1 || distractor2 === a || distractor2 === b);
