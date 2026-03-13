@@ -35,6 +35,49 @@ export default class StationScene {
   }
 
   _enterPracticeMode(data, state) {
+    // If a practice type was chosen at setup, skip the selection and go straight to the puzzle
+    if (state.practiceType) {
+      this.ui = this.game.createSceneUI();
+      const theme = STATION_THEMES[this.stationNum - 1] || STATION_THEMES[0];
+      const puzzleType = PUZZLE_TYPES[state.practiceType] || PUZZLE_TYPES.addition;
+
+      const stationLabel = UI.station.stationOf
+        .replace('{current}', this.stationNum)
+        .replace('{total}', GAME_SETTINGS.totalStations);
+
+      this.ui.innerHTML = `
+        <div class="flex-col gap-lg fade-in-up" style="max-width:550px;width:90%;">
+          <div class="station-header">
+            <div class="station-zone-name" style="color:${theme.accentColor};text-shadow:0 0 12px ${theme.accentColor}">${theme.name}</div>
+            <div class="station-number" style="border-color:${theme.accentColor};box-shadow:0 0 15px ${theme.accentColor};color:${theme.accentColor}">${this.stationNum}</div>
+            <h2>${UI.station.title}</h2>
+            <div class="game-subtitle">${stationLabel}</div>
+          </div>
+
+          <div class="competition-puzzle-preview">
+            <div class="preview-label">${UI.station.practiceSelected}</div>
+            <div class="preview-icon">${puzzleType.icon}</div>
+            <div class="preview-name">${puzzleType.name}</div>
+          </div>
+
+          <div class="puzzles-remaining">
+            ${UI.station.puzzlesLeft} <strong>${this.puzzlesLeft}</strong>
+          </div>
+        </div>
+      `;
+
+      // Auto-advance to puzzle after 1 second
+      this.autoAdvanceTimer_ = setTimeout(() => {
+        this.autoAdvanceTimer_ = null;
+        this.game.switchScene('puzzle', {
+          puzzleType: state.practiceType,
+          station: this.stationNum,
+          puzzlesLeft: this.puzzlesLeft,
+        });
+      }, 1000);
+      return;
+    }
+
     const level = state.difficultyLevel || 1;
     const theme = STATION_THEMES[this.stationNum - 1] || STATION_THEMES[0];
 

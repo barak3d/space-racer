@@ -17,6 +17,7 @@ const DEFAULT_STATE = {
   streak: 0,
   inProgress: false, // האם יש משחק פעיל?
   gameMode: 'practice',
+  practiceType: '',
   competitionPuzzleOrder: [],
   competitionPuzzleIndex: 0,
 };
@@ -52,14 +53,21 @@ class GameState {
   }
 
   reset() {
-    // Keep persistent data: aliensCollected, bestScores
+    // Keep persistent data: player profile, aliensCollected, bestScores
     const persistent = {
+      playerName: this.state.playerName || '',
+      selectedColor: this.state.selectedColor || DEFAULT_STATE.selectedColor,
+      difficultyLevel: this.state.difficultyLevel || DEFAULT_STATE.difficultyLevel,
       aliensCollected: [...(this.state.aliensCollected || [])],
       bestScores: [...(this.state.bestScores || [])],
     };
     this.state = { ...DEFAULT_STATE, ...persistent };
     try { localStorage.removeItem(RACE_STORAGE_KEY); } catch (e) { /* ignore */ }
     this.save();
+  }
+
+  hasPlayerProfile() {
+    return !!(this.state.playerName && this.state.playerName.trim());
   }
 
   // מחיקה מוחלטת — כולל אוסף וניקוד
@@ -121,6 +129,11 @@ class GameState {
 
   setGameMode(mode) {
     this.state.gameMode = mode;
+    this.save();
+  }
+
+  setPracticeType(type) {
+    this.state.practiceType = type;
     this.save();
   }
 
