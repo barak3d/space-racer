@@ -68,11 +68,11 @@ function generateAddition(level, station) {
   if (!cfg.addition) return null;
 
   const { min, max } = getScaledRange(cfg, 'addition', station);
-  // Pick a target sum first (between min*2 and max), then split it into two operands
-  const targetMin = min + min;
-  const targetMax = max;
-  const target = randInt(Math.min(targetMin, targetMax), targetMax);
-  // Split target into a and b, both at least 1
+  // Target sum: at least 60% of max to ensure later stations are challenging
+  const targetFloor = Math.floor(max * 0.6);
+  const targetMin = Math.max(min + min, targetFloor);
+  const target = randInt(Math.min(targetMin, max), max);
+  // Split target into a and b with variety
   const aMin = Math.max(1, Math.floor(target * 0.2));
   const aMax = Math.min(target - 1, Math.floor(target * 0.8));
   const a = randInt(aMin, aMax);
@@ -102,10 +102,11 @@ function generateSubtraction(level, station) {
   if (!cfg.subtraction) return null;
 
   const { min, max } = getScaledRange(cfg, 'subtraction', station);
-  // a is big (upper half of range), b is from min up to a
-  const lowerBound = Math.max(min, Math.floor(max / 2));
-  const a = randInt(lowerBound, max);
-  const b = randInt(min, a); // ensure positive result
+  // a is always from upper 60% of range to ensure big numbers at later stations
+  const aFloor = Math.max(min, Math.floor(max * 0.6));
+  const a = randInt(aFloor, max);
+  // b ranges from 1 up to a (ensure non-negative result)
+  const b = randInt(Math.max(1, min), a);
   const correct = a - b;
 
   const wrongs = generateWrongAnswers(correct, 3, 0, max);
