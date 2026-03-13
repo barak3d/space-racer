@@ -497,3 +497,16 @@ h3 {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
 }
+
+/* === Game Credit === */
+.game-credit {
+  position: fixed;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  z-index: 100;
+  pointer-events: none;
+}
