@@ -48,17 +48,27 @@ async function submitScore(entry) {
     const { collection, addDoc, serverTimestamp } =
       await import(`${FIREBASE_SDK}/firebase-firestore.js`);
 
+    // Validate and clamp all fields client-side so they satisfy Firestore rules.
+    // The server rules are the authoritative enforcement layer; these checks
+    // avoid unnecessary rejected writes.
+    const score = Math.max(0, Math.min(9999999, Math.trunc(Number(entry.score) || 0)));
+    const playerName = String(entry.playerName || '').slice(0, 30).trim() || '—';
+    const difficulty = [1, 2, 3].includes(Number(entry.difficulty))
+      ? Number(entry.difficulty) : 1;
+    const difficultyLabel = String(entry.difficultyLabel || '').slice(0, 10);
+    const accuracy = Math.max(0, Math.min(100, Math.trunc(Number(entry.accuracy) || 0)));
+
     // Validate date format DD/MM/YYYY before storing
     const dateRaw = String(entry.date || '');
     const date = /^\d{2}\/\d{2}\/\d{4}$/.test(dateRaw) ? dateRaw : '';
 
     await addDoc(collection(_db, COLLECTION_NAME), {
-      score: Number(entry.score) || 0,
-      playerName: String(entry.playerName || '').slice(0, 30),
-      difficulty: Number(entry.difficulty) || 1,
-      difficultyLabel: String(entry.difficultyLabel || '').slice(0, 10),
+      score,
+      playerName,
+      difficulty,
+      difficultyLabel,
       date,
-      accuracy: Number(entry.accuracy) || 0,
+      accuracy,
       // Use a server-generated timestamp to prevent client-side manipulation
       timestamp: serverTimestamp(),
     });

@@ -18,15 +18,31 @@ Play it live on [GitHub Pages](https://barak3d.github.io/space-racer/).
 
 ## Global Leaderboard Setup
 
-The game uses **Firebase Firestore** for the global leaderboard so players can compete across devices. The integration is opt-in — the game works fully in local-only mode without any configuration.
+The game uses **Firebase Firestore** for the global leaderboard. The integration is opt-in — the game works fully in local-only mode without any configuration.
 
-### Steps
+### About Firebase Web API Keys
 
-1. Go to [https://console.firebase.google.com](https://console.firebase.google.com) and create a new project (the free **Spark plan** is sufficient).
-2. In your project, click **Add app → Web (`</>`)**, register it, and copy the `firebaseConfig` object.
-3. Open `js/firebaseConfig.js` and paste your values into the `FIREBASE_CONFIG` object.
-4. In your Firebase project, go to **Firestore Database → Create database** → start in **production mode**.
-5. In the **Rules** tab, replace the default rules with:
+Firebase **web** API keys are not secrets. [Google explicitly states](https://firebase.google.com/support/guides/security-checklist) that they are safe to include in client-side code — they are project *identifiers*, not passwords. Access control is enforced by **Firestore Security Rules** and optionally by restricting the key to your domain in Google Cloud Console.
+
+This is the same model used by every Firebase-powered web app (and the Firebase documentation explicitly covers it). The key on its own grants no permissions beyond what your Firestore rules allow.
+
+### Setup Steps
+
+**1. Create a Firebase project**
+
+Go to [https://console.firebase.google.com](https://console.firebase.google.com) and create a new project (the free **Spark plan** is sufficient). Click **Add app → Web (`</>`)**, register it, and copy the `firebaseConfig` object.
+
+**2. Fill in `js/firebaseConfig.js`**
+
+Paste your values into the `FIREBASE_CONFIG` object in `js/firebaseConfig.js`.
+
+**3. Create the Firestore database**
+
+In your Firebase project, go to **Firestore Database → Create database** → start in **production mode**.
+
+**4. Set Firestore Security Rules**
+
+In the **Rules** tab, replace the default rules with the following and click **Publish**:
 
 ```
 rules_version = '2';
@@ -38,16 +54,43 @@ service cloud.firestore {
                     && request.resource.data.score >= 0
                     && request.resource.data.score <= 9999999
                     && request.resource.data.playerName is string
-                    && request.resource.data.playerName.size() <= 30;
+                    && request.resource.data.playerName.size() >= 1
+                    && request.resource.data.playerName.size() <= 30
+                    && request.resource.data.difficulty is int
+                    && request.resource.data.difficulty in [1, 2, 3]
+                    && request.resource.data.accuracy is int
+                    && request.resource.data.accuracy >= 0
+                    && request.resource.data.accuracy <= 100;
+      // No updates or deletes allowed
+      allow update, delete: if false;
     }
   }
 }
 ```
 
-6. Click **Publish** to save the rules.
-7. Deploy the updated `js/firebaseConfig.js` to GitHub Pages — the global leaderboard will be live immediately.
+These rules ensure only valid, in-range data can be written, and nothing can be modified or deleted once stored.
 
-> **Note:** Firebase web API keys are safe to commit publicly. Security is enforced by Firestore rules, not by keeping the key secret.
+**5. Restrict the API key to your domain (recommended)**
+
+Even though Firebase web API keys are safe to expose, restricting them to your domain adds an extra layer of defence:
+
+1. Go to [Google Cloud Console → APIs & Services → Credentials](https://console.cloud.google.com/apis/credentials)
+2. Click the API key named **"Browser key (auto created by Firebase)"**
+3. Under **Application restrictions** select **HTTP referrers (web sites)**
+4. Add your GitHub Pages URL, e.g.:
+   - `https://barak3d.github.io/space-racer/*`
+   - `http://localhost:*` (for local development)
+5. Click **Save**
+
+With this in place, the API key will be silently rejected if used from any other website.
+
+**6. (Optional) Enable Firebase App Check**
+
+[App Check with reCAPTCHA v3](https://firebase.google.com/docs/app-check/web/recaptcha-provider) adds a cryptographic attestation to every Firestore request, making automated bot submissions significantly harder. It's free and invisible to users.
+
+**7. Deploy**
+
+Deploy the updated `js/firebaseConfig.js` to GitHub Pages — the global leaderboard will be live immediately.
 
 ---
 
