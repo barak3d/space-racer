@@ -80,19 +80,21 @@ async function submitScore(entry) {
 }
 
 // Fetch the top global scores. Returns null when not available.
-async function getTopScores(limitCount = GLOBAL_LEADERBOARD_LIMIT) {
+// When difficulty is provided, filters to that grade only (requires composite index).
+async function getTopScores(limitCount = GLOBAL_LEADERBOARD_LIMIT, difficulty = null) {
   const ready = await _ensureInitialized();
   if (!ready) return null;
 
   try {
-    const { collection, query, orderBy, limit, getDocs } =
+    const { collection, query, orderBy, limit, getDocs, where } =
       await import(`${FIREBASE_SDK}/firebase-firestore.js`);
 
-    const q = query(
-      collection(_db, COLLECTION_NAME),
-      orderBy('score', 'desc'),
-      limit(limitCount),
-    );
+    const constraints = [orderBy('score', 'desc'), limit(limitCount)];
+    if (difficulty !== null) {
+      constraints.unshift(where('difficulty', '==', difficulty));
+    }
+
+    const q = query(collection(_db, COLLECTION_NAME), ...constraints);
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => doc.data());
   } catch (e) {

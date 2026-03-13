@@ -586,6 +586,15 @@
   z-index: 25;
 }
 
+/* === Grade Filter Tabs (Leaderboard) === */
+.btn-tiny {
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  min-height: 28px;
+  min-width: 40px;
+  border-radius: 6px;
+}
+
 /* === Leaderboard === */
 .leaderboard-table {
   width: 100%;

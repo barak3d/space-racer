@@ -177,6 +177,21 @@ export default class MenuScene {
           </button>
         </div>
 
+        <div class="grade-tabs" style="display:flex;gap:6px;justify-content:center;margin-bottom:12px;">
+          <button class="btn btn-tiny grade-tab tab-active" data-grade="all">
+            ${UI.leaderboard.gradeAll}
+          </button>
+          <button class="btn btn-tiny grade-tab" data-grade="1" style="opacity:0.6;">
+            ${DIFFICULTY_LEVELS[1].label}
+          </button>
+          <button class="btn btn-tiny grade-tab" data-grade="2" style="opacity:0.6;">
+            ${DIFFICULTY_LEVELS[2].label}
+          </button>
+          <button class="btn btn-tiny grade-tab" data-grade="3" style="opacity:0.6;">
+            ${DIFFICULTY_LEVELS[3].label}
+          </button>
+        </div>
+
         <div id="leaderboard-content"></div>
 
         <button class="btn btn-small mt-md" id="btn-back-leaderboard">${UI.collection.back}</button>
@@ -188,6 +203,9 @@ export default class MenuScene {
     const contentEl = overlay.querySelector('#leaderboard-content');
     const btnLocal = overlay.querySelector('#tab-local');
     const btnGlobal = overlay.querySelector('#tab-global');
+
+    let currentTab = 'local';   // 'local' or 'global'
+    let currentGrade = null;     // null = all, 1/2/3
 
     const renderTable = (entries) => {
       if (!entries || entries.length === 0) {
@@ -222,15 +240,22 @@ export default class MenuScene {
       return html;
     };
 
+    const refreshContent = () => {
+      if (currentTab === 'local') showLocal();
+      else showGlobal();
+    };
+
     const showLocal = () => {
+      currentTab = 'local';
       btnLocal.style.opacity = '1';
       btnLocal.classList.add('tab-active');
       btnGlobal.style.opacity = '0.7';
       btnGlobal.classList.remove('tab-active');
-      contentEl.innerHTML = renderTable(gameState.getLeaderboard());
+      contentEl.innerHTML = renderTable(gameState.getLeaderboard(currentGrade));
     };
 
     const showGlobal = async () => {
+      currentTab = 'global';
       btnGlobal.style.opacity = '1';
       btnGlobal.classList.add('tab-active');
       btnLocal.style.opacity = '0.7';
@@ -247,7 +272,7 @@ export default class MenuScene {
         ${UI.leaderboard.globalLoading}
       </p>`;
 
-      const scores = await cloudLeaderboard.getTopScores();
+      const scores = await cloudLeaderboard.getTopScores(20, currentGrade);
       // Guard: user may have closed the overlay while fetching scores from Firestore
       if (!overlay.isConnected) return;
 
@@ -259,6 +284,21 @@ export default class MenuScene {
         contentEl.innerHTML = renderTable(scores);
       }
     };
+
+    // Grade tab click handlers
+    overlay.querySelectorAll('.grade-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        audioManager.play('click');
+        const grade = btn.dataset.grade;
+        currentGrade = grade === 'all' ? null : Number(grade);
+        // Update grade tab styles
+        overlay.querySelectorAll('.grade-tab').forEach(b => {
+          b.style.opacity = b === btn ? '1' : '0.6';
+          b.classList.toggle('tab-active', b === btn);
+        });
+        refreshContent();
+      });
+    });
 
     btnLocal.addEventListener('click', () => { audioManager.play('click'); showLocal(); });
     btnGlobal.addEventListener('click', () => { audioManager.play('click'); showGlobal(); });

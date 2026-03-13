@@ -189,13 +189,10 @@ class GameState {
     return typeof first === 'number' ? first : (first.score || 0);
   }
 
-  getLeaderboard() {
-    return this.state.bestScores.map(entry => {
-      if (typeof entry === 'number') {
-        return { score: entry };
-      }
-      return entry;
-    });
+  getLeaderboard(difficulty = null) {
+    return this.state.bestScores
+      .map(entry => (typeof entry === 'number' ? { score: entry } : entry))
+      .filter(entry => difficulty === null || entry.difficulty === difficulty);
   }
 
   // Stats
