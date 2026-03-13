@@ -109,3 +109,8 @@ export function getRandomWord(level) {
   const words = getWordsByLevel(level);
   return words[Math.floor(Math.random() * words.length)];
 }
+
+// Helper: get all words from every level
+export function getAllWords() {
+  return [...HEBREW_WORDS.easy, ...HEBREW_WORDS.medium, ...HEBREW_WORDS.hard];
+}
