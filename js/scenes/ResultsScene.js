@@ -141,23 +141,19 @@ export default class ResultsScene {
         alienCard.className = 'new-alien-card alien-bounce';
 
         const icon = document.createElement('div');
-        icon.style.width = '50px';
-        icon.style.height = '50px';
-        icon.style.borderRadius = '50%';
+        icon.className = 'new-alien-icon';
         icon.style.background = alienData.color;
         icon.style.boxShadow = `0 0 15px ${alienData.color}`;
         alienCard.appendChild(icon);
 
         const name = document.createElement('div');
+        name.className = 'new-alien-name';
         name.style.color = alienData.color;
-        name.style.fontWeight = '700';
-        name.style.fontSize = '0.9rem';
         name.textContent = alienData.name;
         alienCard.appendChild(name);
 
         const desc = document.createElement('div');
-        desc.style.fontSize = '0.75rem';
-        desc.style.color = 'var(--text-secondary)';
+        desc.className = 'new-alien-desc';
         desc.textContent = alienData.description;
         alienCard.appendChild(desc);
 
@@ -166,18 +162,14 @@ export default class ResultsScene {
       container.appendChild(aliensSection);
     } else {
       const noAliens = document.createElement('p');
-      noAliens.style.color = 'var(--text-dim)';
-      noAliens.style.fontSize = '0.9rem';
-      noAliens.style.marginTop = '16px';
+      noAliens.className = 'results-no-aliens';
       noAliens.textContent = UI.results.noNewAliens;
       container.appendChild(noAliens);
     }
 
     // Encouragement
     const encouragement = document.createElement('p');
-    encouragement.style.fontSize = '1.1rem';
-    encouragement.style.marginTop = '16px';
-    encouragement.style.color = 'var(--neon-gold)';
+    encouragement.className = 'results-encouragement';
     encouragement.textContent = position === 1 ? UI.results.greatJob : UI.results.tryHarder;
     container.appendChild(encouragement);
 
@@ -228,17 +220,15 @@ export default class ResultsScene {
 
   _addMedalDisplay(parent, emoji, count, label, className) {
     const div = document.createElement('div');
-    div.style.textAlign = 'center';
+    div.className = 'medal-display-item';
 
     const medalEmoji = document.createElement('div');
-    medalEmoji.className = 'medal-reveal';
-    medalEmoji.style.fontSize = '2rem';
+    medalEmoji.className = 'medal-reveal medal-emoji';
     medalEmoji.textContent = `${emoji} ×${count}`;
     div.appendChild(medalEmoji);
 
     const medalLabel = document.createElement('div');
-    medalLabel.style.fontSize = '0.75rem';
-    medalLabel.style.color = 'var(--text-secondary)';
+    medalLabel.className = 'medal-label-text';
     medalLabel.textContent = label;
     div.appendChild(medalLabel);
 

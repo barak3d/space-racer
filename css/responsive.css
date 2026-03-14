@@ -194,23 +194,454 @@
       0 0 80px rgba(0, 0, 0, 0.5);
   }
 
-  .btn {
-    min-height: 48px;
+  /* === Desktop typography scale-up === */
+  .game-title {
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    letter-spacing: 4px;
+    margin-bottom: 1.2rem;
   }
 
+  .game-subtitle {
+    font-size: 1.6rem;
+    margin-bottom: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2.2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  /* === Desktop buttons scale-up === */
+  .btn {
+    min-height: 58px;
+    padding: 18px 36px;
+    font-size: 1.25rem;
+    border-radius: 18px;
+  }
+
+  .btn-big {
+    min-height: 76px;
+    padding: 22px 56px;
+    font-size: 1.5rem;
+    border-radius: 22px;
+  }
+
+  .btn-small {
+    min-height: 50px;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+  }
+
+  /* === Desktop setup screen scale-up === */
+  .setup-container {
+    max-width: 580px;
+  }
+
+  .setup-container h2 {
+    margin-bottom: 0.8rem;
+  }
+
+  .setup-section {
+    margin-bottom: 24px;
+  }
+
+  .setup-section h3 {
+    font-size: 1.35rem; /* override clamp(0.9rem,2.5vw,1.2rem) in game.css */
+    margin-bottom: 0.7rem;
+  }
+
+  .setup-container .btn-big {
+    margin-top: 16px;
+    padding: 20px 56px;
+    min-height: 72px;
+    font-size: 1.45rem; /* override clamp(1.1rem,2.8vw,1.4rem) in game.css */
+  }
+
+  .input-field {
+    max-width: 380px;
+    padding: 16px 24px;
+    font-size: 1.25rem;
+  }
+
+  /* Welcome banner */
+  .welcome-banner {
+    padding: 14px 22px;
+    gap: 16px;
+  }
+
+  .welcome-greeting {
+    font-size: 1.15rem;
+  }
+
+  .welcome-name {
+    font-size: 1.45rem;
+  }
+
+  .welcome-grade {
+    font-size: 1.05rem;
+  }
+
+  .welcome-change-btn {
+    font-size: 0.85rem;
+    padding: 7px 16px;
+  }
+
+  /* Level cards */
+  .level-card {
+    width: 120px;
+    height: 96px;
+  }
+
+  .level-label {
+    font-size: 1.8rem;
+  }
+
+  .level-name {
+    font-size: 0.95rem;
+  }
+
+  .level-picker {
+    gap: 16px;
+  }
+
+  /* Color picker */
+  .color-picker {
+    gap: 18px;
+    margin-top: 10px;
+  }
+
+  .setup-container .color-option {
+    width: 62px;
+    height: 62px;
+  }
+
+  /* Mode cards */
+  .mode-picker {
+    gap: 20px;
+    margin-top: 12px;
+  }
+
+  .mode-card {
+    width: 180px;
+    min-height: 110px;
+    padding: 16px 14px;
+    gap: 5px;
+  }
+
+  .mode-icon {
+    font-size: 1.9rem;
+  }
+
+  .mode-name {
+    font-size: 1.15rem;
+  }
+
+  .mode-desc {
+    font-size: 0.85rem;
+  }
+
+  /* === Desktop puzzle / gameplay scale-up === */
   .answer-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    max-width: 550px;
+    gap: 18px;
+    max-width: 600px;
   }
 
   .answer-btn {
-    min-height: 56px;
-    font-size: 1.3rem;
+    min-height: 64px;
+    font-size: 1.4rem;
+    padding: 16px 24px;
   }
 
   .puzzle-question {
-    font-size: 2.5rem;
+    font-size: 2.8rem; /* override clamp(1.5rem,5vw,2.5rem) in game.css */
+    margin-bottom: 28px;
+  }
+
+  .puzzle-card {
+    max-width: 720px;
+    padding: 44px 52px;
+  }
+
+  .puzzle-type-badge {
+    font-size: 1.05rem;
+    padding: 8px 20px;
+  }
+
+  /* === Desktop HUD === */
+  .hud {
+    padding-top: 14px;
+    padding-bottom: 14px;
+    padding-left: 28px;
+    padding-right: 28px;
+    font-size: 1.1rem; /* override clamp(0.8rem,2vw,1rem) in game.css */
+  }
+
+  .hud-item {
+    gap: 8px;
+  }
+
+  .hud-position {
+    padding: 6px 16px;
+    font-size: 1.05rem;
+  }
+
+  /* === Desktop results === */
+  .results-container {
+    max-width: 600px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+  }
+
+  .stat-label {
+    font-size: 0.95rem;
+  }
+
+  /* === Desktop menu buttons gap === */
+  .flex-col.gap-sm {
+    gap: 12px;
+  }
+
+  .flex-col.gap-lg {
+    gap: 28px;
+  }
+
+  .flex-col.gap-md {
+    gap: 20px;
+  }
+
+  /* === Desktop menu screen scale-up === */
+  .menu-actions-container {
+    max-width: 420px;
+  }
+
+  .saved-game-info {
+    font-size: 1rem;
+  }
+
+  .menu-secondary-buttons {
+    margin-top: 16px;
+  }
+
+  .menu-leaderboard-btn {
+    font-size: 1.05rem;
+  }
+
+  .menu-reset-btn {
+    font-size: 0.95rem;
+    min-height: 48px;
+    min-width: 100px;
+  }
+
+  /* === Desktop station screen scale-up === */
+  .station-header {
+    margin-bottom: 28px;
+  }
+
+  .station-zone-name {
+    font-size: 1rem;
+    letter-spacing: 3px;
+  }
+
+  .station-number {
+    width: 72px;
+    height: 72px;
+    font-size: 1.8rem;
+  }
+
+  .puzzle-type-card {
+    padding: 20px;
+    min-height: 120px;
+    gap: 10px;
+  }
+
+  .puzzle-type-icon {
+    font-size: 2.4rem;
+  }
+
+  .puzzle-type-name {
+    font-size: 1.1rem;
+  }
+
+  .puzzles-remaining {
+    font-size: 1.05rem;
+    margin-top: 20px;
+  }
+
+  .competition-puzzle-preview {
+    padding: 28px 20px;
+    gap: 10px;
+  }
+
+  .preview-label {
+    font-size: 1.05rem;
+  }
+
+  .preview-icon {
+    font-size: 3.5rem;
+  }
+
+  .preview-name {
+    font-size: 1.6rem;
+  }
+
+  /* === Desktop practice type picker === */
+  .practice-type-picker {
+    max-width: 480px;
+    gap: 14px;
+  }
+
+  /* === Desktop timer === */
+  .timer-container {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 20px;
+  }
+
+  .timer-text {
+    font-size: 1.7rem;
+  }
+
+  /* === Desktop results scale-up === */
+  .results-place {
+    font-size: 5rem;
+  }
+
+  .results-stats {
+    gap: 16px;
+    margin: 28px 0;
+  }
+
+  .results-buttons {
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  .medals-display {
+    gap: 24px;
+    margin: 20px 0;
+  }
+
+  .new-aliens-section {
+    margin: 28px 0;
+    padding: 20px;
+  }
+
+  .new-alien-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .new-alien-name {
+    font-size: 1.05rem;
+  }
+
+  .new-alien-desc {
+    font-size: 0.9rem;
+  }
+
+  .results-no-aliens {
+    font-size: 1.05rem;
+  }
+
+  .results-encouragement {
+    font-size: 1.3rem;
+  }
+
+  .medal-emoji {
+    font-size: 2.4rem;
+  }
+
+  .medal-label-text {
+    font-size: 0.9rem;
+  }
+
+  /* === Desktop race track info === */
+  .race-track-info {
+    gap: 16px;
+    padding: 10px 22px;
+  }
+
+  .racer-info {
+    font-size: 1rem;
+    gap: 8px;
+  }
+
+  .racer-dot {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* === Desktop leaderboard overlay scale-up === */
+  .leaderboard-table {
+    margin: 24px 0;
+  }
+
+  .leaderboard-header {
+    font-size: 0.95rem;
+    padding: 12px 16px;
+  }
+
+  .leaderboard-row {
+    padding: 14px 16px;
+    margin: 8px 0;
+  }
+
+  .leaderboard-rank {
+    font-size: 1.2rem;
+  }
+
+  .leaderboard-rank.first {
+    font-size: 1.4rem;
+  }
+
+  .leaderboard-name {
+    font-size: 1.05rem;
+  }
+
+  .leaderboard-score {
+    font-size: 1.1rem;
+  }
+
+  .leaderboard-level {
+    font-size: 1rem;
+  }
+
+  .leaderboard-date {
+    font-size: 0.9rem;
+  }
+
+  /* === Desktop collection overlay === */
+  .collection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 16px;
+    max-width: 700px;
+  }
+
+  .collection-name {
+    font-size: 0.85rem;
+  }
+
+  /* === Desktop feedback text === */
+  .feedback-correct,
+  .feedback-wrong,
+  .feedback-timeout {
+    font-size: 1.6rem;
+  }
+
+  .boost-popup {
+    font-size: 2.4rem;
   }
 }
 
@@ -303,12 +734,14 @@
   }
 }
 
-/* === Safe Area (notch devices) === */
+/* === Safe Area (notch devices — mobile/tablet only) === */
 @supports (padding: env(safe-area-inset-top)) {
-  .hud {
-    padding-top: max(8px, env(safe-area-inset-top));
-    padding-left: max(8px, env(safe-area-inset-left));
-    padding-right: max(8px, env(safe-area-inset-right));
+  @media (max-width: 1024px) {
+    .hud {
+      padding-top: max(8px, env(safe-area-inset-top));
+      padding-left: max(8px, env(safe-area-inset-left));
+      padding-right: max(8px, env(safe-area-inset-right));
+    }
   }
 
   .sound-toggle {

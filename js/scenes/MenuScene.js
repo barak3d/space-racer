@@ -34,11 +34,11 @@ export default class MenuScene {
         <div class="game-subtitle">🚀 ⭐ 🛸</div>
 
         ${hasSavedGame ? `
-          <div class="flex-col gap-md w-full" style="max-width:320px;">
+          <div class="flex-col gap-md w-full menu-actions-container">
             <button class="btn btn-big pulse" id="btn-continue">
               ${UI.menu.continueRace} ▶
             </button>
-            <div class="saved-game-info" style="font-size:0.85rem;color:var(--text-secondary);text-align:center;">
+            <div class="saved-game-info">
               ${state.playerName} · ${UI.race.station} ${state.currentStation}/${GAME_SETTINGS.totalStations} · ${UI.race.score}: ${state.score}
             </div>
             <button class="btn btn-green" id="btn-newgame">
@@ -51,16 +51,14 @@ export default class MenuScene {
           </button>
         `}
 
-        <div class="flex-col gap-sm" style="margin-top:8px;">
+        <div class="flex-col gap-sm menu-secondary-buttons">
           <button class="btn btn-gold btn-small" id="btn-collection">
             ${UI.menu.myCollection}
           </button>
-          <button class="btn btn-small" id="btn-leaderboard" style="border-color:var(--neon-gold);color:var(--neon-gold);
-            box-shadow:0 0 10px rgba(255,215,0,0.2);font-size:0.9rem;">
+          <button class="btn btn-small menu-leaderboard-btn" id="btn-leaderboard">
             🏆 ${UI.leaderboard.button}
           </button>
-          <button class="btn btn-small" id="btn-reset" style="border-color:var(--neon-red);color:var(--neon-red);
-            box-shadow:0 0 10px rgba(255,0,64,0.2);font-size:0.8rem;min-height:40px;min-width:80px;opacity:0.7;">
+          <button class="btn btn-small menu-reset-btn" id="btn-reset">
             ${UI.menu.resetAll} 🗑️
           </button>
         </div>
