@@ -1,5 +1,7 @@
 // Spaceship.js — ציור חללית (Canvas) + אנימציות
 
+const SHIP_FOLLOW_RATE = 8;
+
 export default class Spaceship {
   constructor(name, color, x, y) {
     this.name = name;
@@ -22,7 +24,7 @@ export default class Spaceship {
     this.time += dt * 3;
 
     // Smooth movement toward target
-    const followSpeed = 1 - Math.exp(-8 * dt);
+    const followSpeed = 1 - Math.exp(-SHIP_FOLLOW_RATE * dt);
     this.x += (this.targetX - this.x) * followSpeed;
     this.y += (this.targetY - this.y) * followSpeed;
 
@@ -46,7 +48,6 @@ export default class Spaceship {
   }
 
   setBoost(active) {
-    if (this.boosting === active) return;
     this.boosting = active;
     this.boostTime = 0;
   }

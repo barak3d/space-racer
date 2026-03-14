@@ -170,6 +170,7 @@ export default class RaceScene {
         ai.totalProgress = saved.aiProgress[i].totalProgress || 0;
         ai.solvingStation = saved.aiProgress[i].solvingStation || false;
         ai.puzzlesSolved = saved.aiProgress[i].puzzlesSolved || 0;
+        ai.puzzleAttempts = saved.aiProgress[i].puzzleAttempts || 0;
         ai.stationTimer = saved.aiProgress[i].stationTimer || 0;
         ai.finished = saved.aiProgress[i].finished || false;
       }
@@ -217,6 +218,7 @@ export default class RaceScene {
         totalProgress: ai.totalProgress,
         solvingStation: ai.solvingStation,
         puzzlesSolved: ai.puzzlesSolved,
+        puzzleAttempts: ai.puzzleAttempts,
         stationTimer: ai.stationTimer,
         finished: ai.finished,
       })),
