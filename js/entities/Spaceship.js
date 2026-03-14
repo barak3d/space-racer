@@ -1,9 +1,5 @@
 // Spaceship.js — ציור חללית (Canvas) + אנימציות
 
-// Higher values make ships snap to their target position faster during the race
-// without the sluggish catch-up feel from the old interpolation.
-const SHIP_FOLLOW_RATE = 8;
-
 // ── Color helpers ────────────────────────────────────────────
 function hexToRgb(hex) {
   const h = hex.replace('#', '');
@@ -58,7 +54,8 @@ export default class Spaceship {
     this.time += dt * 3;
 
     // Smooth movement toward target
-    const followSpeed = 1 - Math.exp(-SHIP_FOLLOW_RATE * dt);
+    const followRate = 8;
+    const followSpeed = 1 - Math.exp(-followRate * dt);
     this.x += (this.targetX - this.x) * followSpeed;
     this.y += (this.targetY - this.y) * followSpeed;
 
