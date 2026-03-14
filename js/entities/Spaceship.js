@@ -1,6 +1,7 @@
 // Spaceship.js — ציור חללית (Canvas) + אנימציות
 
-// Higher values make ships snap to their target position faster during the race.
+// Higher values make ships snap to their target position faster during the race
+// without the sluggish catch-up feel from the old interpolation.
 const SHIP_FOLLOW_RATE = 8;
 
 // ── Color helpers ────────────────────────────────────────────
