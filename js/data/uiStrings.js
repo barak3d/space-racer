@@ -38,6 +38,9 @@ const UI = {
     practiceTypeRequired: 'צָרִיךְ לִבְחֹר סוּג תִּרְגּוּל!',
     playingAs: 'מְשַׂחֵק בְּתוֹר:',
     changePlayer: 'שְׁנֵה שֵׁם וְכִתָּה',
+    welcome: 'שָׁלוֹם,',
+    continueButton: 'הַמְשֵׁךְ ➡️',
+    switchPlayer: 'לֹא אֲנִי? הַחְלֵף שַׂחְקָן',
   },
 
   // מירוץ

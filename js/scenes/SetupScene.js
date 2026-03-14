@@ -40,27 +40,18 @@ export default class SetupScene {
     const state = gameState.getState();
     const hasProfile = gameState.hasPlayerProfile() && !this.editingProfile;
 
-    this.ui.innerHTML = `
-      <div class="setup-container fade-in-up">
-        <h2>${UI.gameName}</h2>
+    // State 1 & 2: No profile OR editing profile → show name + grade form only
+    if (!hasProfile) {
+      const prefillName = this.editingProfile ? (state.playerName || '') : '';
+      this.ui.innerHTML = `
+        <div class="setup-container fade-in-up">
+          <h2>${UI.gameName}</h2>
 
-        ${hasProfile ? `
-          <div class="setup-section">
-            <div class="player-profile-card">
-              <div class="profile-playing-as">${UI.setup.playingAs}</div>
-              <div class="profile-name-display">${state.playerName}</div>
-              <div class="profile-grade-display">${DIFFICULTY_LEVELS[state.difficultyLevel]?.name || ''}</div>
-              <button class="btn btn-small profile-change-btn" id="btn-change-player">
-                ✏️ ${UI.setup.changePlayer}
-              </button>
-            </div>
-          </div>
-        ` : `
           <div class="setup-section">
             <h3>${UI.setup.enterName}</h3>
             <input type="text" class="input-field" id="name-input"
               placeholder="${UI.setup.namePlaceholder}" maxlength="20" autocomplete="off"
-              value="${this.editingProfile ? (state.playerName || '') : ''}">
+              value="${prefillName}">
             <div class="setup-error" id="name-error"></div>
           </div>
 
@@ -75,7 +66,34 @@ export default class SetupScene {
               `).join('')}
             </div>
           </div>
-        `}
+
+          <button class="btn btn-big pulse" id="btn-continue-profile">
+            ${UI.setup.continueButton}
+          </button>
+        </div>
+      `;
+
+      this._bindProfileFormEvents();
+      return;
+    }
+
+    // State 3: Has profile → welcome banner + color + mode + go
+    this.ui.innerHTML = `
+      <div class="setup-container fade-in-up">
+        <h2>${UI.gameName}</h2>
+
+        <div class="setup-section">
+          <div class="welcome-banner">
+            <div class="welcome-info">
+              <span class="welcome-greeting">${UI.setup.welcome}</span>
+              <span class="welcome-name">${state.playerName}</span>
+              <span class="welcome-grade">(${DIFFICULTY_LEVELS[state.difficultyLevel]?.name || ''})</span>
+            </div>
+            <button class="welcome-change-btn" id="btn-change-player">
+              ${UI.setup.switchPlayer}
+            </button>
+          </div>
+        </div>
 
         <div class="setup-section">
           <h3>${UI.setup.chooseColor}</h3>
@@ -112,10 +130,43 @@ export default class SetupScene {
       </div>
     `;
 
-    this._bindEvents(hasProfile);
+    this._bindGameOptionsEvents();
   }
 
-  _bindEvents(hasProfile) {
+  _bindProfileFormEvents() {
+    // Level selection
+    const levelCards = this.ui.querySelectorAll('.level-card');
+    levelCards.forEach(card => {
+      card.addEventListener('click', () => {
+        audioManager.play('click');
+        levelCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        this.selectedLevel = parseInt(card.dataset.level);
+      });
+    });
+
+    // Continue button — save name + grade, then re-render to show game options
+    this.ui.querySelector('#btn-continue-profile').addEventListener('click', () => {
+      const nameInput = this.ui.querySelector('#name-input');
+      const name = nameInput ? nameInput.value.trim() : '';
+
+      if (!name) {
+        const error = this.ui.querySelector('#name-error');
+        if (error) error.textContent = UI.setup.nameRequired;
+        if (nameInput) nameInput.focus();
+        audioManager.play('wrong');
+        return;
+      }
+
+      audioManager.play('click');
+      gameState.setPlayerName(name);
+      gameState.setDifficultyLevel(this.selectedLevel);
+      this.editingProfile = false;
+      this._render();
+    });
+  }
+
+  _bindGameOptionsEvents() {
     // Change player button
     const btnChange = this.ui.querySelector('#btn-change-player');
     if (btnChange) {
@@ -137,17 +188,6 @@ export default class SetupScene {
       });
     });
 
-    // Level selection (only shown when editing)
-    const levelCards = this.ui.querySelectorAll('.level-card');
-    levelCards.forEach(card => {
-      card.addEventListener('click', () => {
-        audioManager.play('click');
-        levelCards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        this.selectedLevel = parseInt(card.dataset.level);
-      });
-    });
-
     // Mode selection
     const modeCards = this.ui.querySelectorAll('.mode-card');
     modeCards.forEach(card => {
@@ -159,34 +199,16 @@ export default class SetupScene {
       });
     });
 
-    // Go button
+    // Go button — start the game
     this.ui.querySelector('#btn-go').addEventListener('click', () => {
-      this._onStart(hasProfile);
+      this._onStart();
     });
   }
 
-  _onStart(hasProfile) {
-    let name;
-    let level;
-
-    if (hasProfile) {
-      const state = gameState.getState();
-      name = state.playerName;
-      level = state.difficultyLevel;
-    } else {
-      const nameInput = this.ui.querySelector('#name-input');
-      name = nameInput ? nameInput.value.trim() : '';
-
-      if (!name) {
-        const error = this.ui.querySelector('#name-error');
-        if (error) error.textContent = UI.setup.nameRequired;
-        if (nameInput) nameInput.focus();
-        audioManager.play('wrong');
-        return;
-      }
-
-      level = this.selectedLevel;
-    }
+  _onStart() {
+    const state = gameState.getState();
+    const name = state.playerName;
+    const level = state.difficultyLevel;
 
     audioManager.play('boost');
 

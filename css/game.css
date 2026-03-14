@@ -425,15 +425,29 @@
   text-align: center;
 }
 
+.setup-container h2 {
+  margin-bottom: 0.5rem;
+}
+
 .setup-section {
-  margin-bottom: 24px;
+  margin-bottom: 18px;
+}
+
+.setup-section h3 {
+  margin-bottom: 0.4rem;
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
 }
 
 .color-picker {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-top: 12px;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.setup-container .color-option {
+  width: 48px;
+  height: 48px;
 }
 
 .level-picker {
@@ -502,6 +516,68 @@
   box-shadow: 0 0 18px rgba(0, 255, 255, 0.1);
 }
 
+/* === Welcome Banner (Setup — returning player) === */
+.welcome-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: rgba(0, 255, 255, 0.04);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.welcome-info {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-wrap: wrap;
+  direction: rtl;
+}
+
+.welcome-greeting {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.welcome-name {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px var(--neon-cyan);
+}
+
+.welcome-grade {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.welcome-change-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  font-family: var(--font-family);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.welcome-change-btn:hover {
+  color: var(--text-secondary);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 .profile-playing-as {
   font-size: 0.85rem;
   color: var(--text-secondary);
@@ -558,8 +634,8 @@
 .mode-picker {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-top: 12px;
+  gap: 14px;
+  margin-top: 8px;
   flex-wrap: wrap;
 }
 
@@ -569,8 +645,8 @@
   align-items: center;
   justify-content: center;
   width: 140px;
-  min-height: 100px;
-  padding: 12px 8px;
+  min-height: 80px;
+  padding: 10px 8px;
   background: rgba(255, 255, 255, 0.03);
   border: 2px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-md);
@@ -578,7 +654,7 @@
   transition: all 0.2s ease;
   font-family: var(--font-family);
   color: var(--text-primary);
-  gap: 4px;
+  gap: 2px;
 }
 
 .mode-card:hover {
@@ -593,19 +669,20 @@
 }
 
 .mode-icon {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
 }
 
 .mode-name {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 900;
 }
 
 .mode-desc {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-secondary);
   text-align: center;
-  margin-top: 2px;
+  margin-top: 1px;
+  line-height: 1.3;
 }
 
 /* === Competition Puzzle Preview === */
@@ -748,6 +825,14 @@
   min-height: 28px;
   min-width: 40px;
   border-radius: 6px;
+}
+
+/* Extra breathing room before the Go button */
+.setup-container .btn-big {
+  margin-top: 8px;
+  padding: 14px 40px;
+  min-height: 56px;
+  font-size: clamp(1.1rem, 2.8vw, 1.4rem);
 }
 
 /* === Leaderboard === */

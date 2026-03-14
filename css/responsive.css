@@ -90,6 +90,51 @@
   .station-info {
     font-size: 0.9rem;
   }
+
+  /* Setup screen compaction for mobile */
+  .setup-container .btn {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .setup-container .btn-big {
+    min-height: 52px;
+    padding: 12px 24px;
+    font-size: 1.15rem;
+  }
+
+  .setup-container .welcome-change-btn {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+  }
+
+  .setup-section {
+    margin-bottom: 14px;
+  }
+
+  .setup-container .color-option {
+    width: 42px;
+    height: 42px;
+  }
+
+  .mode-card {
+    width: 120px;
+    min-height: 70px;
+    padding: 8px 6px;
+  }
+
+  .mode-icon {
+    font-size: 1.2rem;
+  }
+
+  .level-card {
+    width: 85px;
+    height: 68px;
+  }
+
+  .level-label {
+    font-size: 1.3rem;
+  }
 }
 
 /* === Tablet (480px - 1024px) === */
@@ -135,8 +180,8 @@
   }
 
   #game-container {
-    max-width: 1200px;
-    max-height: 675px;
+    max-width: 1600px;
+    max-height: 900px;
     margin: auto;
     position: absolute;
     top: 50%;
