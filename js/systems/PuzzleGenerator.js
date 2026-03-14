@@ -317,7 +317,8 @@ function generateWordPuzzle(level, station) {
   const question = `הַשְׁלֵם אֶת הָאוֹת הַחֲסֵרָה:\n${displayWord}`;
   const questionDisplay = 'הַשְׁלֵם אֶת הָאוֹת הַחֲסֵרָה';
 
-  // Generate wrong letters (base letters without nikud as answer options)
+  // Generate wrong letters — we pick base letters, then dress them with the
+  // same nikud marks as the missing grapheme so all options look consistent.
   // Skip any candidate that would turn the blank into another known word.
   const wouldFormKnownWord = (candidate) => {
     const testBase = graphemes.map((g, i) => (i === letterIndex ? candidate : baseLetter(g))).join('');
@@ -333,7 +334,11 @@ function generateWordPuzzle(level, station) {
     attempts++;
   }
 
-  const options = shuffle([missingGrapheme, ...[...wrongLetters].slice(0, 3)]);
+  // Apply the same nikud marks to wrong letters so all options look consistent
+  const nikudMarks = missingGrapheme.replace(/[^\u0591-\u05C7]/g, '');
+  const wrongWithNikud = [...wrongLetters].slice(0, 3).map(l => l + nikudMarks);
+
+  const options = shuffle([missingGrapheme, ...wrongWithNikud]);
   const correctIndex = options.indexOf(missingGrapheme);
 
   const timeLimit = cfg.timePerPuzzle + STATION_TIME_OFFSET[Math.max(0, Math.min(station - 1, STATION_TIME_OFFSET.length - 1))];
