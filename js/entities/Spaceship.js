@@ -121,12 +121,13 @@ export default class Spaceship {
     }
 
     // Update & cull
+    const cullThreshold = maxSparks * 2;
     for (let i = this._sparks.length - 1; i >= 0; i--) {
       const p = this._sparks[i];
       p.x += p.vx;
       p.y += p.vy;
       p.life -= p.decay * dt;
-      if (p.life <= 0 || this._sparks.length > maxSparks * 2) {
+      if (p.life <= 0 || this._sparks.length > cullThreshold) {
         this._sparks.splice(i, 1);
       }
     }
