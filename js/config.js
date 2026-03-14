@@ -122,6 +122,20 @@ export const AI_OPPONENTS = [
   },
 ];
 
+// AI difficulty scaling per grade level — higher grades = tougher opponents
+export const AI_DIFFICULTY_SCALING = {
+  1: { speedMultiplier: 0.75, accuracyBonus: -0.10 },
+  2: { speedMultiplier: 1.0,  accuracyBonus: 0 },
+  3: { speedMultiplier: 1.2,  accuracyBonus: 0.05 },
+};
+
+// Player travel speed between stations depends on station performance
+export const PLAYER_TRAVEL = {
+  baseSpeed: 0.35,
+  minSpeedMultiplier: 0.4,   // 40% speed when all answers wrong
+  maxSpeedMultiplier: 1.5,   // 150% speed when all answers correct
+};
+
 export const STATION_THEMES = [
   {
     name: 'ערפילית הפתיחה',

@@ -1,7 +1,7 @@
 // RaceScene.js — מסך מירוץ ראשי
 
 import UI from '../data/uiStrings.js';
-import { COLORS, GAME_SETTINGS, DIFFICULTY_LEVELS, STATION_THEMES, PUZZLE_TYPES, GAME_MODES } from '../config.js';
+import { COLORS, GAME_SETTINGS, DIFFICULTY_LEVELS, STATION_THEMES, PUZZLE_TYPES, GAME_MODES, PLAYER_TRAVEL } from '../config.js';
 import gameState from '../systems/GameState.js';
 import audioManager from '../systems/AudioManager.js';
 import StarField from '../entities/StarField.js';
@@ -29,6 +29,7 @@ export default class RaceScene {
     this.playerProgress = 0;
     this.playerAtStation = false;
     this.stationsCompleted = 0;
+    this.playerTravelSpeed = PLAYER_TRAVEL.baseSpeed; // performance-based speed
 
     // Track layout
     this.trackStartX = 0;
@@ -79,6 +80,7 @@ export default class RaceScene {
     this.playerProgress = 0;
     this.stationsCompleted = 0;
     this.playerAtStation = false;
+    this.playerTravelSpeed = PLAYER_TRAVEL.baseSpeed;
 
     // Create player ship
     this.playerShip = new Spaceship(
@@ -88,8 +90,9 @@ export default class RaceScene {
       this.trackY - 30,
     );
 
-    // Create AI opponents
-    this.aiOpponents = createOpponents();
+    // Create AI opponents scaled by difficulty
+    const level = state.difficultyLevel || 1;
+    this.aiOpponents = createOpponents(level);
     this.aiShips = this.aiOpponents.map((ai, i) => {
       const ship = new Spaceship(ai.name, ai.color, this.trackStartX, this.trackY + 20 + i * 30);
       return ship;
@@ -149,6 +152,7 @@ export default class RaceScene {
     this.playerProgress = saved.playerProgress || 0;
     this.stationsCompleted = saved.stationsCompleted || 0;
     this.playerAtStation = false;
+    this.playerTravelSpeed = saved.playerTravelSpeed || PLAYER_TRAVEL.baseSpeed;
 
     // Create player ship at saved position
     this.playerShip = new Spaceship(
@@ -158,8 +162,9 @@ export default class RaceScene {
       this.trackY - 30,
     );
 
-    // Create AI opponents and restore their progress
-    this.aiOpponents = createOpponents();
+    // Create AI opponents scaled by difficulty and restore their progress
+    const level = state.difficultyLevel || 1;
+    this.aiOpponents = createOpponents(level);
     this.aiShips = this.aiOpponents.map((ai, i) => {
       const ship = new Spaceship(ai.name, ai.color, this.trackStartX, this.trackY + 20 + i * 30);
 
@@ -211,6 +216,7 @@ export default class RaceScene {
       playerStation: this.playerStation,
       playerProgress: this.playerProgress,
       stationsCompleted: this.stationsCompleted,
+      playerTravelSpeed: this.playerTravelSpeed,
       phase: this.phase,
       aiProgress: this.aiOpponents.map(ai => ({
         station: ai.station,
@@ -288,6 +294,15 @@ export default class RaceScene {
         this.stations[this.playerStation - 1].setCompleted(true);
         this.stations[this.playerStation - 1].setActive(false);
       }
+
+      // Calculate performance-based travel speed for next segment
+      const puzzlesPerStation = GAME_SETTINGS.puzzlesPerStation;
+      const recentPuzzles = state.puzzleHistory.slice(-puzzlesPerStation);
+      const correct = recentPuzzles.filter(p => p.correct).length;
+      const accuracy = correct / puzzlesPerStation;
+      const { baseSpeed, minSpeedMultiplier, maxSpeedMultiplier } = PLAYER_TRAVEL;
+      const multiplier = minSpeedMultiplier + accuracy * (maxSpeedMultiplier - minSpeedMultiplier);
+      this.playerTravelSpeed = baseSpeed * multiplier;
 
       // Apply theme for the new zone
       this._applyTheme(this.stationsCompleted);
@@ -428,9 +443,9 @@ export default class RaceScene {
     const state = gameState.getState();
     const level = state.difficultyLevel || 1;
 
-    // Move player toward next station
+    // Move player toward next station (speed based on performance)
     if (!this.playerAtStation) {
-      this.playerProgress += dt * 0.35;
+      this.playerProgress += dt * this.playerTravelSpeed;
 
       if (this.playerProgress >= 1) {
         this.playerProgress = 1;
