@@ -116,6 +116,8 @@ export default class MenuScene {
   }
 
   _showResetConfirm() {
+    this.ui.style.visibility = 'hidden';
+
     const overlay = document.createElement('div');
     overlay.className = 'scene active';
     overlay.style.background = 'var(--overlay-bg)';
@@ -143,6 +145,7 @@ export default class MenuScene {
 
     overlay.querySelector('#btn-reset-cancel').addEventListener('click', () => {
       audioManager.play('click');
+      this.ui.style.visibility = '';
       overlay.remove();
     });
 
@@ -157,6 +160,8 @@ export default class MenuScene {
   }
 
   _showLeaderboard() {
+    this.ui.style.visibility = 'hidden';
+
     const overlay = document.createElement('div');
     overlay.className = 'scene active';
     overlay.style.background = 'var(--overlay-bg)';
@@ -315,6 +320,7 @@ export default class MenuScene {
 
     overlay.querySelector('#btn-back-leaderboard').addEventListener('click', () => {
       audioManager.play('click');
+      this.ui.style.visibility = '';
       overlay.remove();
     });
 
@@ -323,6 +329,8 @@ export default class MenuScene {
   }
 
   _showCollection() {
+    this.ui.style.visibility = 'hidden';
+
     const state = gameState.getState();
     const collected = state.aliensCollected || [];
     const playerName = state.playerName || '';
@@ -357,16 +365,18 @@ export default class MenuScene {
         const item = document.createElement('div');
         item.className = `collection-item${unlocked ? '' : ' locked'}`;
 
-        if (unlocked) {
-          const canvas = Alien.createCanvas(alien, COLLECTION_CANVAS_SIZE);
-          canvas.className = 'collection-alien-canvas';
-          item.appendChild(canvas);
-        } else {
-          const lock = document.createElement('div');
-          lock.style.cssText = `width:${COLLECTION_CANVAS_SIZE}px;height:${COLLECTION_CANVAS_SIZE}px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;`;
-          lock.textContent = '🔒';
-          item.appendChild(lock);
+        const canvasWrapper = document.createElement('div');
+        canvasWrapper.className = 'collection-canvas-wrapper';
+        const canvas = Alien.createCanvas(alien, COLLECTION_CANVAS_SIZE);
+        canvas.className = 'collection-alien-canvas';
+        canvasWrapper.appendChild(canvas);
+        if (!unlocked) {
+          const lockBadge = document.createElement('div');
+          lockBadge.className = 'collection-lock-badge';
+          lockBadge.textContent = '🔒';
+          canvasWrapper.appendChild(lockBadge);
         }
+        item.appendChild(canvasWrapper);
 
         const nameEl = document.createElement('div');
         nameEl.className = 'collection-name';
@@ -383,6 +393,7 @@ export default class MenuScene {
       backBtn.textContent = UI.collection.back;
       backBtn.addEventListener('click', () => {
         audioManager.play('click');
+        this.ui.style.visibility = '';
         overlay.remove();
       });
       wrapper.appendChild(backBtn);
