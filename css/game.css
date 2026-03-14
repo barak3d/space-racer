@@ -1027,7 +1027,7 @@
 .leaderboard-overlay {
   background: var(--overlay-bg);
   z-index: 50;
-  overflow-y: auto;
+  overflow: auto;
   justify-content: flex-start;
   padding-top: 40px;
   padding-bottom: 40px;
