@@ -3,7 +3,7 @@
 class AudioManager {
   constructor() {
     this.ctx = null;
-    this.muted = true; // מושתק כברירת מחדל
+    this.muted = this._loadMutedState();
     this.initialized = false;
     this.sounds = {};
     this.bgMusic = null;
@@ -14,6 +14,7 @@ class AudioManager {
     // Bind toggle button
     const btn = document.getElementById('sound-toggle');
     if (btn) {
+      btn.textContent = this.muted ? '🔇' : '🔊';
       btn.addEventListener('click', () => this.toggleMute());
     }
   }
@@ -31,6 +32,7 @@ class AudioManager {
   toggleMute() {
     this._ensureContext();
     this.muted = !this.muted;
+    this._saveMutedState();
     const btn = document.getElementById('sound-toggle');
     if (btn) {
       btn.textContent = this.muted ? '🔇' : '🔊';
@@ -261,6 +263,21 @@ class AudioManager {
   _playWhoosh() {
     const now = this.ctx.currentTime;
     this._playNoiseBurst(now, 0.4, 0.15);
+  }
+
+  _loadMutedState() {
+    try {
+      const stored = localStorage.getItem('starRace_musicMuted');
+      return stored === null ? true : stored === 'true';
+    } catch (e) {
+      return true;
+    }
+  }
+
+  _saveMutedState() {
+    try {
+      localStorage.setItem('starRace_musicMuted', String(this.muted));
+    } catch (e) { /* ignore */ }
   }
 
   _playNoiseBurst(startTime, duration, volume) {
