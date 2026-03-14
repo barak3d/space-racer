@@ -96,15 +96,20 @@ export default class PuzzleScene {
   }
 
   _formatQuestion(question) {
-    // Split multi-line questions (e.g., comparison: "מי גדול יותר?\n5  או  9")
+    // Split multi-line questions (e.g., comparison: "מי גדול יותר?\n5 + 3  אוֹ  9 - 2")
     const lines = question.split('\n');
     return lines.map(line => {
-      // If line contains math operators or is a number sequence, wrap entire line in LTR
+      // Comparison lines: math expressions separated by Hebrew "אוֹ" (or)
+      // Wrap each math expression in LTR individually, keep "אוֹ" as RTL
+      if (/[\u0590-\u05FF]/.test(line) && /\d[\s]*[\+\-×]/.test(line)) {
+        return line.replace(/(\d[\d\s\+\-×=]*\d)/g,
+          '<span dir="ltr" style="unicode-bidi:bidi-override;display:inline-block;">$1</span>');
+      }
+      // Pure math expression or number sequence — force entire line LTR
       if (/[\d].*[\+\-×=]/.test(line) || /\d+\s*,\s*\d+/.test(line)) {
-        // Math expression or number sequence — force LTR for correct display
         return `<span dir="ltr" style="unicode-bidi:bidi-override;display:inline-block;">${line}</span>`;
       }
-      // If line has numbers mixed with Hebrew (e.g., "5  או  9"), wrap numbers individually
+      // If line has numbers mixed with Hebrew, wrap numbers individually
       if (/\d/.test(line)) {
         return line.replace(/(\d+)/g, '<span class="number">$1</span>');
       }

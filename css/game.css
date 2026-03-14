@@ -776,6 +776,42 @@
   text-shadow: 0 0 12px var(--neon-gold);
 }
 
+/* === Ready Button & Auto-Start Bar === */
+.ready-btn {
+  animation: ready-pulse 1.2s ease-in-out infinite alternate;
+  margin-top: 4px;
+}
+
+@keyframes ready-pulse {
+  from { box-shadow: 0 0 8px rgba(0, 255, 136, 0.3); transform: scale(1); }
+  to   { box-shadow: 0 0 24px rgba(0, 255, 136, 0.6); transform: scale(1.04); }
+}
+
+.auto-start-bar-container {
+  width: 80%;
+  max-width: 300px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.auto-start-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+  border-radius: 3px;
+  transform-origin: right; /* RTL: shrink from right to left */
+  animation: auto-start-shrink linear forwards;
+  /* animation-duration set dynamically via JS */
+}
+
+@keyframes auto-start-shrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
 /* === Collection Screen === */
 .collection-grid {
   display: grid;

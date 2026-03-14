@@ -68,6 +68,7 @@ const UI = {
     notAvailable: 'לֹא זָמִין בְּכִתָּה זוֹ',
     autoSelected: 'הַחִידָה הַבָּאָה:',
     practiceSelected: 'מְתַרְגְּלִים:',
+    ready: '!מוּכָן 🚀',
   },
 
   // חידות

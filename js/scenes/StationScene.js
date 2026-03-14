@@ -5,6 +5,8 @@ import { PUZZLE_TYPES, GAME_SETTINGS, STATION_THEMES, GAME_MODES } from '../conf
 import gameState from '../systems/GameState.js';
 import audioManager from '../systems/AudioManager.js';
 
+const AUTO_START_DELAY = 30; // seconds before auto-advancing to puzzle
+
 export default class StationScene {
   constructor(game) {
     this.game = game;
@@ -12,6 +14,7 @@ export default class StationScene {
     this.stationNum = 1;
     this.puzzlesLeft = GAME_SETTINGS.puzzlesPerStation;
     this.autoAdvanceTimer_ = null;
+    this.countdownInterval_ = null;
   }
 
   enter(data = {}) {
@@ -63,18 +66,15 @@ export default class StationScene {
           <div class="puzzles-remaining">
             ${UI.station.puzzlesLeft} <strong>${this.puzzlesLeft}</strong>
           </div>
+
+          <button class="btn btn-green btn-big ready-btn" id="ready-btn">${UI.station.ready}</button>
+          <div class="auto-start-bar-container">
+            <div class="auto-start-bar" id="auto-start-bar"></div>
+          </div>
         </div>
       `;
 
-      // Auto-advance to puzzle after 1 second
-      this.autoAdvanceTimer_ = setTimeout(() => {
-        this.autoAdvanceTimer_ = null;
-        this.game.switchScene('puzzle', {
-          puzzleType: state.practiceType,
-          station: this.stationNum,
-          puzzlesLeft: this.puzzlesLeft,
-        });
-      }, 1000);
+      this._setupReadyButton(state.practiceType);
       return;
     }
 
@@ -162,28 +162,58 @@ export default class StationScene {
         <div class="puzzles-remaining">
           ${UI.station.puzzlesLeft} <strong>${this.puzzlesLeft}</strong>
         </div>
+
+        <button class="btn btn-green btn-big ready-btn" id="ready-btn">${UI.station.ready}</button>
+        <div class="auto-start-bar-container">
+          <div class="auto-start-bar" id="auto-start-bar"></div>
+        </div>
       </div>
     `;
 
-    // Auto-advance to puzzle after 1 second
-    this.autoAdvanceTimer_ = setTimeout(() => {
-      this.autoAdvanceTimer_ = null;
+    this._setupReadyButton(nextType);
+  }
+
+  /** Shared setup for ready button + auto-start countdown (competition & practice-preset) */
+  _setupReadyButton(puzzleType) {
+    const readyBtn = this.ui.querySelector('#ready-btn');
+    const bar = this.ui.querySelector('#auto-start-bar');
+
+    const advance = () => {
+      this._clearTimers();
+      audioManager.play('click');
       this.game.switchScene('puzzle', {
-        puzzleType: nextType,
+        puzzleType,
         station: this.stationNum,
         puzzlesLeft: this.puzzlesLeft,
       });
-    }, 1000);
+    };
+
+    // Ready button — immediate advance
+    readyBtn.addEventListener('click', advance);
+
+    // Auto-start countdown bar animation (CSS-driven)
+    bar.style.animationDuration = `${AUTO_START_DELAY}s`;
+
+    // Auto-advance after AUTO_START_DELAY seconds
+    this.autoAdvanceTimer_ = setTimeout(advance, AUTO_START_DELAY * 1000);
   }
 
   update(dt) {}
   render(ctx, w, h) {}
 
-  exit() {
+  _clearTimers() {
     if (this.autoAdvanceTimer_) {
       clearTimeout(this.autoAdvanceTimer_);
       this.autoAdvanceTimer_ = null;
     }
+    if (this.countdownInterval_) {
+      clearInterval(this.countdownInterval_);
+      this.countdownInterval_ = null;
+    }
+  }
+
+  exit() {
+    this._clearTimers();
     this.game.removeSceneUI(this.ui);
     this.ui = null;
   }
