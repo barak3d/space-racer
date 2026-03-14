@@ -1,6 +1,6 @@
 // AIOpponent.js — לוגיקת חלליות מחשב (יריבות)
 
-import { AI_OPPONENTS, GAME_SETTINGS, DIFFICULTY_LEVELS } from '../config.js';
+import { AI_OPPONENTS, AI_DIFFICULTY_SCALING, GAME_SETTINGS, DIFFICULTY_LEVELS } from '../config.js';
 
 const AI_TRAVEL_BASE_PACE = 0.34;
 const AI_LAUNCH_BOOST = 0.08;
@@ -11,11 +11,11 @@ const AI_CADENCE_BASE = 0.94;
 const AI_CADENCE_FREQUENCY = 1.7;
 const AI_CADENCE_AMPLITUDE = 0.08;
 const AI_CATCHUP_THRESHOLD = 0.03;
-const AI_MAX_CATCHUP_BOOST = 0.12;
-const AI_CATCHUP_FACTOR = 0.55;
+const AI_MAX_CATCHUP_BOOST = 0.04;
+const AI_CATCHUP_FACTOR = 0.2;
 const AI_SLOWDOWN_THRESHOLD = -0.08;
-const AI_MAX_SLOWDOWN = 0.06;
-const AI_SLOWDOWN_FACTOR = 0.2;
+const AI_MAX_SLOWDOWN = 0.02;
+const AI_SLOWDOWN_FACTOR = 0.08;
 const AI_MIN_TRAVEL_SPEED = 0.18;
 const AI_BOOSTING_GAP_THRESHOLD = 0.05;
 const AI_BOOSTING_TIME_THRESHOLD = 0.05;
@@ -32,6 +32,8 @@ const AI_INITIAL_BOOST_VARIANCE = 0.5;
 const AI_CADENCE_PHASE_RANGE = Math.PI * 2;
 const AI_BASE_SOLVE_PACE = 0.2;
 const AI_MAX_PUZZLE_ATTEMPTS = 3;
+const AI_MAX_ACCURACY = 0.95;
+const AI_MIN_ACCURACY = 0.4;
 
 export default class AIOpponent {
   constructor(config) {
@@ -225,7 +227,12 @@ export default class AIOpponent {
   }
 }
 
-// Create default opponents from config
-export function createOpponents() {
-  return AI_OPPONENTS.map(cfg => new AIOpponent(cfg));
+// Create opponents scaled by difficulty level
+export function createOpponents(difficultyLevel = 1) {
+  const scaling = AI_DIFFICULTY_SCALING[difficultyLevel] || AI_DIFFICULTY_SCALING[1];
+  return AI_OPPONENTS.map(cfg => new AIOpponent({
+    ...cfg,
+    speed: cfg.speed * scaling.speedMultiplier,
+    accuracy: Math.min(AI_MAX_ACCURACY, Math.max(AI_MIN_ACCURACY, cfg.accuracy + scaling.accuracyBonus)),
+  }));
 }
