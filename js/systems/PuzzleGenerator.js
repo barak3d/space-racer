@@ -333,15 +333,15 @@ function generateWordPuzzle(level, station) {
     attempts++;
   }
 
-  const options = shuffle([missingBase, ...[...wrongLetters].slice(0, 3)]);
-  const correctIndex = options.indexOf(missingBase);
+  const options = shuffle([missingGrapheme, ...[...wrongLetters].slice(0, 3)]);
+  const correctIndex = options.indexOf(missingGrapheme);
 
   const timeLimit = cfg.timePerPuzzle + STATION_TIME_OFFSET[Math.max(0, Math.min(station - 1, STATION_TIME_OFFSET.length - 1))];
   return buildPuzzle(
     'words',
     question,
     questionDisplay,
-    missingBase,
+    missingGrapheme,
     options,
     correctIndex,
     level,
