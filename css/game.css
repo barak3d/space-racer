@@ -395,13 +395,6 @@
   margin-top: 4px;
 }
 
-.medals-display {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin: 16px 0;
-}
-
 .new-aliens-section {
   margin: 24px 0;
   padding: 16px;
@@ -450,19 +443,6 @@
   font-size: 1.1rem;
   margin-top: 16px;
   color: var(--neon-gold);
-}
-
-.medal-display-item {
-  text-align: center;
-}
-
-.medal-emoji {
-  font-size: 2rem;
-}
-
-.medal-label-text {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
 }
 
 .results-buttons {

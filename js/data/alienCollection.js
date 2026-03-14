@@ -45,8 +45,8 @@ const ALIENS = [
     shape: 'star',
     eyes: 2,
     antenna: true,
-    unlockCondition: 'first_gold',
-    unlockDescription: 'קַבֵּל מְדָלְיַת זָהָב רִאשׁוֹנָה',
+    unlockCondition: 'score_200',
+    unlockDescription: 'הַגִּיעַ לְ-200 נְקוּדּוֹת',
     description: 'כּוֹכָבִית זְהוּבָה שֶׁמְּאִירָה אֶת הַדֶּרֶךְ',
   },
   {
@@ -225,8 +225,8 @@ const ALIENS = [
     shape: 'ring',
     eyes: 2,
     antenna: true,
-    unlockCondition: '3_gold',
-    unlockDescription: 'אֱסוֹף 3 מְדָלְיוֹת זָהָב',
+    unlockCondition: '20_correct',
+    unlockDescription: 'עֲנֵה נָכוֹן עַל 20 חִידוֹת',
     description: 'חַיְזָר עִם טַבַּעוֹת כְּמוֹ שַׁבְּתַאי',
   },
   {
@@ -281,11 +281,11 @@ export function checkAlienUnlock(alien, gameState) {
     case '5_words':
       return h.filter(p => p.type === 'words' && p.correct).length >= 5;
 
-    case 'first_gold':
-      return (gameState.medals?.gold || 0) >= 1;
+    case 'score_200':
+      return (gameState.score || 0) >= 200;
 
-    case '3_gold':
-      return (gameState.medals?.gold || 0) >= 3;
+    case '20_correct':
+      return h.filter(p => p.correct).length >= 20;
 
     case 'complete_station':
       return gameState.currentStation > 1 || gameState.currentStationPuzzlesCompleted >= 3;

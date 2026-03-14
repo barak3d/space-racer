@@ -11,7 +11,6 @@ const DEFAULT_STATE = {
   currentStation: 1,
   currentStationPuzzlesCompleted: 0,
   score: 0,
-  medals: { gold: 0, silver: 0, bronze: 0 },
   aliensCollected: [],
   puzzleHistory: [],
   bestScores: [],
@@ -173,14 +172,6 @@ class GameState {
   addScore(points) {
     this.state.score += points;
     this.save();
-  }
-
-  // Medals
-  addMedal(type) {
-    if (this.state.medals[type] !== undefined) {
-      this.state.medals[type]++;
-      this.save();
-    }
   }
 
   // Aliens

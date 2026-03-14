@@ -555,11 +555,6 @@
     margin-top: 28px;
   }
 
-  .medals-display {
-    gap: 24px;
-    margin: 20px 0;
-  }
-
   .new-aliens-section {
     margin: 28px 0;
     padding: 20px;
@@ -584,14 +579,6 @@
 
   .results-encouragement {
     font-size: 1.3rem;
-  }
-
-  .medal-emoji {
-    font-size: 2.4rem;
-  }
-
-  .medal-label-text {
-    font-size: 0.9rem;
   }
 
   /* === Desktop race track info === */
