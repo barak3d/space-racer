@@ -4,7 +4,7 @@ import UI from '../data/uiStrings.js';
 import { PUZZLE_TYPES } from '../config.js';
 import gameState from '../systems/GameState.js';
 import { generatePuzzle } from '../systems/PuzzleGenerator.js';
-import { calculateScore, getMaxScoreForPuzzle, getMedal } from '../systems/ScoreSystem.js';
+import { calculateScore } from '../systems/ScoreSystem.js';
 import TimerSystem from '../systems/TimerSystem.js';
 import audioManager from '../systems/AudioManager.js';
 import { createStartOverButton } from '../ui/startOverHelper.js';
@@ -152,11 +152,8 @@ export default class PuzzleScene {
 
       // Calculate score
       const score = calculateScore(this.timer.getTimeLeft(), this.puzzle.timeLimit, this.puzzle.difficulty, this.puzzle.type);
-      const maxScore = getMaxScoreForPuzzle(this.puzzle.timeLimit, this.puzzle.difficulty, this.puzzle.type);
-      const medal = getMedal(score, maxScore);
 
       gameState.addScore(score);
-      if (medal) gameState.addMedal(medal);
 
       // Show boost animation
       const boostEl = document.createElement('div');

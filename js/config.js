@@ -99,12 +99,6 @@ export const PUZZLE_TYPE_MULTIPLIERS = {
   words: 1.2,
 };
 
-export const MEDAL_THRESHOLDS = {
-  gold: 0.8,
-  silver: 0.6,
-  bronze: 0.4,
-};
-
 export const AI_OPPONENTS = [
   {
     name: 'זְרִיזוֹן',

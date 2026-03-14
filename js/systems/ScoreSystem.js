@@ -1,6 +1,6 @@
-// ScoreSystem.js — חישוב ניקוד, מדליות, בוסטים
+// ScoreSystem.js — חישוב ניקוד ובוסטים
 
-import { GAME_SETTINGS, MEDAL_THRESHOLDS, PUZZLE_TYPE_MULTIPLIERS } from '../config.js';
+import { GAME_SETTINGS, PUZZLE_TYPE_MULTIPLIERS } from '../config.js';
 import UI from '../data/uiStrings.js';
 
 export function calculateScore(timeLeft, totalTime, difficulty, puzzleType) {
@@ -9,19 +9,6 @@ export function calculateScore(timeLeft, totalTime, difficulty, puzzleType) {
   const base = Math.round(GAME_SETTINGS.scorePerCorrect * typeMultiplier);
   const timeBonus = Math.round((timeLeft / totalTime) * 100 * GAME_SETTINGS.timeBonusMultiplier * difficultyMultiplier * typeMultiplier);
   return base + timeBonus;
-}
-
-export function getMaxScoreForPuzzle(totalTime, difficulty, puzzleType) {
-  return calculateScore(totalTime, totalTime, difficulty, puzzleType);
-}
-
-export function getMedal(score, maxScore) {
-  if (maxScore === 0) return null;
-  const ratio = score / maxScore;
-  if (ratio >= MEDAL_THRESHOLDS.gold) return 'gold';
-  if (ratio >= MEDAL_THRESHOLDS.silver) return 'silver';
-  if (ratio >= MEDAL_THRESHOLDS.bronze) return 'bronze';
-  return null;
 }
 
 export function calculateBoost(isCorrect, streak) {
@@ -73,4 +60,4 @@ export function getBadges(puzzleHistory) {
   return badges;
 }
 
-export default { calculateScore, getMaxScoreForPuzzle, getMedal, calculateBoost, getBadges };
+export default { calculateScore, calculateBoost, getBadges };

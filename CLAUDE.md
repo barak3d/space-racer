@@ -49,7 +49,7 @@ Key points:
 - `js/scenes/PuzzleScene.js` — gameplay (puzzle card + answers + timer)
 - `js/scenes/RaceScene.js` — canvas-based race track
 - `js/scenes/StationScene.js` — station/zone screen
-- `js/scenes/ResultsScene.js` — results + medals + alien unlocks
+- `js/scenes/ResultsScene.js` — results + alien unlocks
 
 ## Key Gotchas
 - Hebrew nikud (vowel marks) inflates line-height — use explicit `line-height` or matching padding when buttons sit side by side
