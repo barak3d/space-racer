@@ -116,8 +116,6 @@ export default class MenuScene {
   }
 
   _showResetConfirm() {
-    this.ui.style.visibility = 'hidden';
-
     const overlay = document.createElement('div');
     overlay.className = 'scene active';
     overlay.style.background = 'var(--overlay-bg)';
@@ -145,7 +143,6 @@ export default class MenuScene {
 
     overlay.querySelector('#btn-reset-cancel').addEventListener('click', () => {
       audioManager.play('click');
-      this.ui.style.visibility = '';
       overlay.remove();
     });
 
@@ -160,8 +157,6 @@ export default class MenuScene {
   }
 
   _showLeaderboard() {
-    this.ui.style.visibility = 'hidden';
-
     const overlay = document.createElement('div');
     overlay.className = 'scene active';
     overlay.style.background = 'var(--overlay-bg)';
@@ -320,7 +315,6 @@ export default class MenuScene {
 
     overlay.querySelector('#btn-back-leaderboard').addEventListener('click', () => {
       audioManager.play('click');
-      this.ui.style.visibility = '';
       overlay.remove();
     });
 
@@ -329,8 +323,6 @@ export default class MenuScene {
   }
 
   _showCollection() {
-    this.ui.style.visibility = 'hidden';
-
     const state = gameState.getState();
     const collected = state.aliensCollected || [];
     const playerName = state.playerName || '';
@@ -393,7 +385,6 @@ export default class MenuScene {
       backBtn.textContent = UI.collection.back;
       backBtn.addEventListener('click', () => {
         audioManager.play('click');
-        this.ui.style.visibility = '';
         overlay.remove();
       });
       wrapper.appendChild(backBtn);

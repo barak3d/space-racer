@@ -845,7 +845,25 @@
 }
 
 .collection-item.locked {
-  opacity: 0.3;
+  opacity: 0.45;
+}
+
+.collection-item.locked .collection-alien-canvas {
+  filter: grayscale(100%);
+}
+
+.collection-canvas-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.collection-lock-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  font-size: 0.85rem;
+  line-height: 1;
+  pointer-events: none;
 }
 
 .collection-alien-icon {
