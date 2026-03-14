@@ -396,39 +396,148 @@ export default class MenuScene {
   render(ctx, w, h) {
     this.starField.render(ctx);
 
-    // Draw decorative spaceship
+    // Draw decorative spaceship (game-style)
     const sx = w * 0.5;
     const sy = h * 0.35 + Math.sin(this.shipTime * 1.5) * 10;
+    const s = 25;
+    const color = '#00ffff';
+    const rgb = { r: 0, g: 255, b: 255 };
+    const mid = { r: 0, g: 179, b: 179 };
+    const dark = { r: 0, g: 115, b: 115 };
 
     ctx.save();
     ctx.translate(sx, sy);
+    ctx.rotate(-Math.PI / 2); // Point upward
 
-    // Ship body
-    ctx.shadowColor = '#00ffff';
-    ctx.shadowBlur = 20;
-    ctx.fillStyle = '#00ffff';
+    // ── Engine flames (behind body) ──
+    ctx.shadowBlur = 0;
+    const flicker = Math.sin(this.shipTime * 12) * s * 0.08
+                  + Math.sin(this.shipTime * 17) * s * 0.05;
+    const flameLen = s * 0.4 + flicker + Math.random() * s * 0.15;
+    const ex = -s * 0.55;
+
+    const outerGrad = ctx.createLinearGradient(ex, 0, ex - flameLen, 0);
+    outerGrad.addColorStop(0, 'rgba(255, 120, 20, 0.8)');
+    outerGrad.addColorStop(0.5, 'rgba(255, 60, 10, 0.4)');
+    outerGrad.addColorStop(1, 'rgba(255, 30, 0, 0)');
+    ctx.fillStyle = outerGrad;
     ctx.beginPath();
-    ctx.moveTo(0, -25);
-    ctx.lineTo(15, 15);
-    ctx.lineTo(5, 10);
-    ctx.lineTo(5, 25);
-    ctx.lineTo(-5, 25);
-    ctx.lineTo(-5, 10);
-    ctx.lineTo(-15, 15);
+    ctx.moveTo(ex, -s * 0.18);
+    ctx.quadraticCurveTo(ex - flameLen * 0.6, -s * 0.06, ex - flameLen, 0);
+    ctx.quadraticCurveTo(ex - flameLen * 0.6, s * 0.06, ex, s * 0.18);
     ctx.closePath();
     ctx.fill();
 
-    // Engine glow
-    const flicker = 0.7 + Math.random() * 0.3;
-    ctx.shadowColor = '#ff6600';
-    ctx.shadowBlur = 15 * flicker;
-    ctx.fillStyle = `rgba(255, 102, 0, ${0.6 * flicker})`;
+    const innerLen = flameLen * 0.55;
+    const innerGrad = ctx.createLinearGradient(ex, 0, ex - innerLen, 0);
+    innerGrad.addColorStop(0, 'rgba(255, 255, 220, 0.95)');
+    innerGrad.addColorStop(0.4, 'rgba(255, 220, 80, 0.6)');
+    innerGrad.addColorStop(1, 'rgba(255, 160, 30, 0)');
+    ctx.fillStyle = innerGrad;
     ctx.beginPath();
-    ctx.moveTo(-4, 25);
-    ctx.lineTo(4, 25);
-    ctx.lineTo(0, 25 + 15 * flicker);
+    ctx.moveTo(ex, -s * 0.09);
+    ctx.quadraticCurveTo(ex - innerLen * 0.5, -s * 0.02, ex - innerLen, 0);
+    ctx.quadraticCurveTo(ex - innerLen * 0.5, s * 0.02, ex, s * 0.09);
     ctx.closePath();
     ctx.fill();
+
+    ctx.fillStyle = `rgba(${dark.r},${dark.g},${dark.b},0.9)`;
+    ctx.fillRect(ex - 1, -s * 0.2, 3, s * 0.4);
+
+    // ── Wings ──
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 6;
+
+    const wingGrad = ctx.createLinearGradient(0, -s * 0.3, 0, -s * 0.9);
+    wingGrad.addColorStop(0, `rgba(${rgb.r},${rgb.g},${rgb.b},0.9)`);
+    wingGrad.addColorStop(1, `rgba(${dark.r},${dark.g},${dark.b},0.7)`);
+    ctx.fillStyle = wingGrad;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.05, -s * 0.28);
+    ctx.lineTo(-s * 0.2, -s * 0.75);
+    ctx.lineTo(-s * 0.55, -s * 0.55);
+    ctx.lineTo(-s * 0.45, -s * 0.22);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = `rgba(255,255,255,${0.6 + Math.sin(this.shipTime * 2) * 0.3})`;
+    ctx.beginPath();
+    ctx.arc(-s * 0.2, -s * 0.73, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    const wingGrad2 = ctx.createLinearGradient(0, s * 0.3, 0, s * 0.9);
+    wingGrad2.addColorStop(0, `rgba(${rgb.r},${rgb.g},${rgb.b},0.9)`);
+    wingGrad2.addColorStop(1, `rgba(${dark.r},${dark.g},${dark.b},0.7)`);
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = color;
+    ctx.fillStyle = wingGrad2;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.05, s * 0.28);
+    ctx.lineTo(-s * 0.2, s * 0.75);
+    ctx.lineTo(-s * 0.55, s * 0.55);
+    ctx.lineTo(-s * 0.45, s * 0.22);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = `rgba(255,255,255,${0.6 + Math.sin(this.shipTime * 2) * 0.3})`;
+    ctx.beginPath();
+    ctx.arc(-s * 0.2, s * 0.73, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // ── Body (fuselage) ──
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 12;
+
+    const bodyGrad = ctx.createLinearGradient(0, -s * 0.35, 0, s * 0.35);
+    bodyGrad.addColorStop(0, `rgba(${rgb.r},${rgb.g},${rgb.b},1)`);
+    bodyGrad.addColorStop(0.45, `rgba(${mid.r},${mid.g},${mid.b},1)`);
+    bodyGrad.addColorStop(1, `rgba(${dark.r},${dark.g},${dark.b},1)`);
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.moveTo(s * 1.1, 0);
+    ctx.quadraticCurveTo(s * 0.6, -s * 0.28, -s * 0.15, -s * 0.32);
+    ctx.lineTo(-s * 0.55, -s * 0.22);
+    ctx.lineTo(-s * 0.55, s * 0.22);
+    ctx.lineTo(-s * 0.15, s * 0.32);
+    ctx.quadraticCurveTo(s * 0.6, s * 0.28, s * 1.1, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(s * 1.05, 0);
+    ctx.quadraticCurveTo(s * 0.55, -s * 0.25, -s * 0.1, -s * 0.3);
+    ctx.stroke();
+
+    // ── Cockpit ──
+    const glassGrad = ctx.createRadialGradient(
+      s * 0.4, -s * 0.04, 0,
+      s * 0.35, 0, s * 0.22,
+    );
+    glassGrad.addColorStop(0, 'rgba(180, 220, 255, 0.7)');
+    glassGrad.addColorStop(0.5, 'rgba(100, 180, 255, 0.35)');
+    glassGrad.addColorStop(1, 'rgba(40, 80, 160, 0.2)');
+    ctx.fillStyle = glassGrad;
+    ctx.beginPath();
+    ctx.ellipse(s * 0.35, 0, s * 0.2, s * 0.12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+    ctx.beginPath();
+    ctx.ellipse(s * 0.42, -s * 0.04, s * 0.07, s * 0.04, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // ── Racing stripe ──
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.85, 0);
+    ctx.lineTo(-s * 0.4, 0);
+    ctx.stroke();
 
     ctx.restore();
   }
