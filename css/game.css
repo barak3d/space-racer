@@ -425,6 +425,11 @@
   border-radius: 50%;
 }
 
+.new-alien-canvas {
+  display: block;
+  margin: 0 auto;
+}
+
 .new-alien-name {
   font-weight: 700;
   font-size: 0.9rem;
@@ -845,6 +850,11 @@
 
 .collection-alien-icon {
   font-size: 2rem;
+}
+
+.collection-alien-canvas {
+  display: block;
+  margin: 0 auto;
 }
 
 .collection-name {

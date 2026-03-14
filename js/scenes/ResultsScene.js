@@ -140,11 +140,9 @@ export default class ResultsScene {
         const alienCard = document.createElement('div');
         alienCard.className = 'new-alien-card alien-bounce';
 
-        const icon = document.createElement('div');
-        icon.className = 'new-alien-icon';
-        icon.style.background = alienData.color;
-        icon.style.boxShadow = `0 0 15px ${alienData.color}`;
-        alienCard.appendChild(icon);
+        const canvas = Alien.createCanvas(alienData, 70);
+        canvas.className = 'new-alien-canvas';
+        alienCard.appendChild(canvas);
 
         const name = document.createElement('div');
         name.className = 'new-alien-name';
