@@ -206,7 +206,17 @@ export default class MenuScene {
     const btnGlobal = overlay.querySelector('#tab-global');
 
     let currentTab = 'local';   // 'local' or 'global'
-    let currentGrade = null;     // null = all, 1/2/3
+    const userGrade = gameState.state.difficultyLevel || null;
+    let currentGrade = userGrade;     // null = all, 1/2/3
+
+    // Pre-select the user's grade tab
+    if (userGrade) {
+      overlay.querySelectorAll('.grade-tab').forEach(b => {
+        const isMatch = Number(b.dataset.grade) === userGrade;
+        b.style.opacity = isMatch ? '1' : '0.6';
+        b.classList.toggle('tab-active', isMatch);
+      });
+    }
 
     const renderTable = (entries) => {
       if (!entries || entries.length === 0) {
