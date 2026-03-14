@@ -370,7 +370,7 @@ export default class MenuScene {
 
         const nameEl = document.createElement('div');
         nameEl.className = 'collection-name';
-        nameEl.textContent = unlocked ? alien.name : '?';
+        nameEl.textContent = alien.name;
         item.appendChild(nameEl);
 
         grid.appendChild(item);
