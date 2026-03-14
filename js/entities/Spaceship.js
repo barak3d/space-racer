@@ -54,9 +54,11 @@ export default class Spaceship {
     this.time += dt * 3;
 
     // Smooth movement toward target
-    const lerpSpeed = 3 * dt;
-    this.x += (this.targetX - this.x) * lerpSpeed;
-    this.y += (this.targetY - this.y) * lerpSpeed;
+    // Higher values make ships snap to their target position faster.
+    const followRate = 8;
+    const followSpeed = 1 - Math.exp(-followRate * dt);
+    this.x += (this.targetX - this.x) * followSpeed;
+    this.y += (this.targetY - this.y) * followSpeed;
 
     // Hover effect
     const hoverY = Math.sin(this.time) * this.hoverAmplitude;
