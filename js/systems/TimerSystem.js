@@ -78,7 +78,7 @@ export default class TimerSystem {
     const div = document.createElement('div');
     div.className = 'timer-container';
     div.innerHTML = `
-      <svg class="timer-ring" width="80" height="80" viewBox="0 0 80 80">
+      <svg class="timer-ring" width="100%" height="100%" viewBox="0 0 80 80">
         <circle class="timer-bg" cx="40" cy="40" r="35"/>
         <circle class="timer-fill" cx="40" cy="40" r="35"
           stroke-dasharray="${2 * Math.PI * 35}"
