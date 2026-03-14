@@ -2,42 +2,20 @@ name: PR Preview Deploy
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, closed]
     branches: [master]
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
   pull-requests: write
 
-concurrency:
-  group: pages-pr-${{ github.event.number }}
-  cancel-in-progress: true
+concurrency: preview-${{ github.ref }}
 
 jobs:
   deploy-preview:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: rossjrw/pr-preview-action@v1
         with:
-          path: .
-      - id: deployment
-        uses: actions/deploy-pages@v4
-      - name: Comment PR with preview URL
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const url = '${{ steps.deployment.outputs.page_url }}';
-            const body = `### 🚀 Preview deployed!\n\nYour changes are live at: ${url}\n\n> This preview will be overwritten by future PR or main branch deployments.`;
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body
-            });
+          source-dir: .
