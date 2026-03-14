@@ -33,7 +33,7 @@ const UI = {
     modePractice: 'תִּרְגּוּל',
     modePracticeDesc: 'בְּחַר בְּעַצְמְךָ אֵיזוֹ חִידָה לְתַרְגֵּל',
     modeCompetition: 'תַּחֲרוּת',
-    modeCompetitionDesc: 'הַמַּעֲרֶכֶת בּוֹחֶרֶת — נִקּוּד עוֹלָמִי!',
+    modeCompetitionDesc: 'אִסְפוּ חַיְזָרִים וְטַפְּסוּ לְרֹאשׁ טַבְלַת הַשִּׂיאִים!',
     choosePracticeType: 'בְּחַר מָה לְתַרְגֵּל:',
     practiceTypeRequired: 'צָרִיךְ לִבְחֹר סוּג תִּרְגּוּל!',
     playingAs: 'מְשַׂחֵק בְּתוֹר:',
