@@ -675,9 +675,14 @@
 .setup-nav-buttons {
   display: flex;
   justify-content: center;
+  align-items: stretch;
   gap: 12px;
   flex-wrap: wrap;
   margin-top: 8px;
+}
+
+.setup-nav-buttons .btn {
+  display: flex;
 }
 
 /* === Mode Picker === */

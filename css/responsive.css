@@ -262,6 +262,17 @@
     font-size: 1.45rem; /* override clamp(1.1rem,2.8vw,1.4rem) in game.css */
   }
 
+  /* Match button heights when side by side in nav row */
+  .setup-nav-buttons .btn {
+    padding: 20px 36px;
+    min-height: 72px;
+    font-size: 1.25rem;
+  }
+
+  .setup-nav-buttons .btn-big {
+    margin-top: 0;
+  }
+
   .input-field {
     max-width: 380px;
     padding: 16px 24px;
