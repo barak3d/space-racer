@@ -32,6 +32,8 @@ const AI_INITIAL_BOOST_VARIANCE = 0.5;
 const AI_CADENCE_PHASE_RANGE = Math.PI * 2;
 const AI_BASE_SOLVE_PACE = 0.2;
 const AI_MAX_PUZZLE_ATTEMPTS = 3;
+const AI_MAX_ACCURACY = 0.95;
+const AI_MIN_ACCURACY = 0.4;
 
 export default class AIOpponent {
   constructor(config) {
@@ -231,6 +233,6 @@ export function createOpponents(difficultyLevel = 1) {
   return AI_OPPONENTS.map(cfg => new AIOpponent({
     ...cfg,
     speed: cfg.speed * scaling.speedMultiplier,
-    accuracy: Math.min(0.95, Math.max(0.4, cfg.accuracy + scaling.accuracyBonus)),
+    accuracy: Math.min(AI_MAX_ACCURACY, Math.max(AI_MIN_ACCURACY, cfg.accuracy + scaling.accuracyBonus)),
   }));
 }

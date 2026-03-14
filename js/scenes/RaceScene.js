@@ -298,8 +298,9 @@ export default class RaceScene {
       // Calculate performance-based travel speed for next segment
       const puzzlesPerStation = GAME_SETTINGS.puzzlesPerStation;
       const recentPuzzles = state.puzzleHistory.slice(-puzzlesPerStation);
+      const answered = Math.min(recentPuzzles.length, puzzlesPerStation);
       const correct = recentPuzzles.filter(p => p.correct).length;
-      const accuracy = correct / puzzlesPerStation;
+      const accuracy = answered > 0 ? correct / answered : 0;
       const { baseSpeed, minSpeedMultiplier, maxSpeedMultiplier } = PLAYER_TRAVEL;
       const multiplier = minSpeedMultiplier + accuracy * (maxSpeedMultiplier - minSpeedMultiplier);
       this.playerTravelSpeed = baseSpeed * multiplier;
