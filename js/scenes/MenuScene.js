@@ -158,28 +158,22 @@ export default class MenuScene {
 
   _showLeaderboard() {
     const overlay = document.createElement('div');
-    overlay.className = 'scene active';
-    overlay.style.background = 'var(--overlay-bg)';
-    overlay.style.zIndex = '50';
-    overlay.style.overflow = 'auto';
-    overlay.style.justifyContent = 'flex-start';
-    overlay.style.paddingTop = '40px';
-    overlay.style.paddingBottom = '40px';
+    overlay.className = 'scene active leaderboard-overlay';
 
     overlay.innerHTML = `
-      <div style="max-width:580px;width:92%;text-align:center;">
-        <h2 style="color:var(--neon-gold);text-shadow:0 0 20px var(--neon-gold);">🏆 ${UI.leaderboard.title}</h2>
+      <div class="leaderboard-container">
+        <h2 class="leaderboard-title">🏆 ${UI.leaderboard.title}</h2>
 
-        <div class="leaderboard-tabs" style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;">
-          <button id="tab-local" class="btn btn-small tab-active" style="flex:1;max-width:200px;">
+        <div class="leaderboard-tabs">
+          <button id="tab-local" class="btn btn-small tab-active">
             ${UI.leaderboard.tabLocal}
           </button>
-          <button id="tab-global" class="btn btn-small" style="flex:1;max-width:200px;opacity:0.7;border-color:var(--neon-gold);color:var(--neon-gold);">
+          <button id="tab-global" class="btn btn-small" style="opacity:0.7;border-color:var(--neon-gold);color:var(--neon-gold);">
             ${UI.leaderboard.tabGlobal}
           </button>
         </div>
 
-        <div class="grade-tabs" style="display:flex;gap:6px;justify-content:center;margin-bottom:12px;">
+        <div class="grade-tabs">
           <button class="btn btn-tiny grade-tab tab-active" data-grade="all">
             ${UI.leaderboard.gradeAll}
           </button>
