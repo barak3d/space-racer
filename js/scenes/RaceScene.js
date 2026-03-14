@@ -24,9 +24,7 @@ export default class RaceScene {
     this.stations = [];
 
     // Race state
-    this.phase = 'countdown'; // countdown, racing, atStation, finished
-    this.countdownValue = 3;
-    this.countdownTimer = 0;
+    this.phase = 'racing'; // racing, atStation, finished
     this.playerStation = 0;
     this.playerProgress = 0;
     this.playerAtStation = false;
@@ -76,9 +74,7 @@ export default class RaceScene {
   }
 
   _startFreshRace(state) {
-    this.phase = 'countdown';
-    this.countdownValue = 3;
-    this.countdownTimer = 0;
+    this.phase = 'racing';
     this.playerStation = 0;
     this.playerProgress = 0;
     this.stationsCompleted = 0;
@@ -138,8 +134,8 @@ export default class RaceScene {
     // Create HUD
     this._createHUD();
 
-    // Start countdown
-    audioManager.play('countdown');
+    // Start racing
+    audioManager.play('boost');
 
     // שמירה ראשונית
     this._saveCurrentRaceState();
@@ -149,8 +145,6 @@ export default class RaceScene {
     const state = gameState.getState();
 
     this.phase = 'racing'; // חוזרים ישר למירוץ
-    this.countdownValue = 0;
-    this.countdownTimer = 1; // skip countdown
     this.playerStation = saved.playerStation || 0;
     this.playerProgress = saved.playerProgress || 0;
     this.stationsCompleted = saved.stationsCompleted || 0;
@@ -420,28 +414,8 @@ export default class RaceScene {
     this.aiShips.forEach(s => s.update(dt));
     this.stations.forEach(s => s.update(dt));
 
-    switch (this.phase) {
-      case 'countdown':
-        this._updateCountdown(dt);
-        break;
-      case 'racing':
-        this._updateRacing(dt);
-        break;
-    }
-  }
-
-  _updateCountdown(dt) {
-    this.countdownTimer += dt;
-    if (this.countdownTimer >= 1) {
-      this.countdownTimer = 0;
-      this.countdownValue--;
-      if (this.countdownValue > 0) {
-        audioManager.play('countdown');
-      } else {
-        this.phase = 'racing';
-        audioManager.play('boost');
-        this._saveCurrentRaceState();
-      }
+    if (this.phase === 'racing') {
+      this._updateRacing(dt);
     }
   }
 
@@ -573,54 +547,6 @@ export default class RaceScene {
     // Draw player ship
     if (this.playerShip) this.playerShip.draw(ctx);
 
-    // Draw countdown
-    if (this.phase === 'countdown' && this.countdownValue > 0) {
-      this._drawCountdown(ctx, w, h);
-    }
-
-    // Draw "GO!" after countdown
-    if (this.phase === 'racing' && this.countdownValue <= 0 && this.countdownTimer < 0.8) {
-      this._drawGo(ctx, w, h);
-    }
-  }
-
-  _drawCountdown(ctx, w, h) {
-    ctx.save();
-    ctx.fillStyle = 'rgba(10, 0, 32, 0.6)';
-    ctx.fillRect(0, 0, w, h);
-
-    const scale = 1 + (1 - this.countdownTimer) * 0.5;
-    ctx.translate(w / 2, h / 2);
-    ctx.scale(scale, scale);
-
-    ctx.fillStyle = COLORS.gold;
-    ctx.font = "900 80px 'Noto Sans Hebrew', sans-serif";
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = COLORS.gold;
-    ctx.shadowBlur = 40;
-    ctx.fillText(this.countdownValue, 0, 0);
-
-    ctx.restore();
-  }
-
-  _drawGo(ctx, w, h) {
-    ctx.save();
-    const alpha = Math.max(0, 1 - this.countdownTimer / 0.8);
-    ctx.globalAlpha = alpha;
-    const scale = 1 + this.countdownTimer * 0.5;
-    ctx.translate(w / 2, h / 2);
-    ctx.scale(scale, scale);
-
-    ctx.fillStyle = COLORS.green;
-    ctx.font = "900 60px 'Noto Sans Hebrew', sans-serif";
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = COLORS.green;
-    ctx.shadowBlur = 40;
-    ctx.fillText(UI.race.raceStart, 0, 0);
-
-    ctx.restore();
   }
 
   exit() {
