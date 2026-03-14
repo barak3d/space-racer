@@ -105,28 +105,6 @@ export default class ResultsScene {
     this._addStat(stats, longestStreak, UI.results.longestStreak);
     container.appendChild(stats);
 
-    // Medals
-    const medals = state.medals || { gold: 0, silver: 0, bronze: 0 };
-    if (medals.gold + medals.silver + medals.bronze > 0) {
-      const medalsTitle = document.createElement('h3');
-      medalsTitle.textContent = UI.results.medals;
-      container.appendChild(medalsTitle);
-
-      const medalsDiv = document.createElement('div');
-      medalsDiv.className = 'medals-display';
-
-      if (medals.gold > 0) {
-        this._addMedalDisplay(medalsDiv, '🥇', medals.gold, UI.results.gold, 'medal-gold');
-      }
-      if (medals.silver > 0) {
-        this._addMedalDisplay(medalsDiv, '🥈', medals.silver, UI.results.silver, 'medal-silver');
-      }
-      if (medals.bronze > 0) {
-        this._addMedalDisplay(medalsDiv, '🥉', medals.bronze, UI.results.bronze, 'medal-bronze');
-      }
-      container.appendChild(medalsDiv);
-    }
-
     // New aliens
     if (this.newAliens.length > 0) {
       const aliensSection = document.createElement('div');
@@ -214,23 +192,6 @@ export default class ResultsScene {
     card.appendChild(labelDiv);
 
     parent.appendChild(card);
-  }
-
-  _addMedalDisplay(parent, emoji, count, label, className) {
-    const div = document.createElement('div');
-    div.className = 'medal-display-item';
-
-    const medalEmoji = document.createElement('div');
-    medalEmoji.className = 'medal-reveal medal-emoji';
-    medalEmoji.textContent = `${emoji} ×${count}`;
-    div.appendChild(medalEmoji);
-
-    const medalLabel = document.createElement('div');
-    medalLabel.className = 'medal-label-text';
-    medalLabel.textContent = label;
-    div.appendChild(medalLabel);
-
-    parent.appendChild(div);
   }
 
   update(dt) {

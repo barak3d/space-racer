@@ -403,36 +403,6 @@ h3 {
   transition: width var(--transition-normal);
 }
 
-/* === Medals === */
-.medal {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  font-weight: 900;
-}
-
-.medal-gold {
-  background: radial-gradient(circle, #ffd700, #b8860b);
-  box-shadow: 0 0 var(--glow-sm) #ffd700;
-  color: #1a0040;
-}
-
-.medal-silver {
-  background: radial-gradient(circle, #c0c0c0, #808080);
-  box-shadow: 0 0 var(--glow-sm) #c0c0c0;
-  color: #1a0040;
-}
-
-.medal-bronze {
-  background: radial-gradient(circle, #cd7f32, #8b4513);
-  box-shadow: 0 0 var(--glow-sm) #cd7f32;
-  color: #1a0040;
-}
-
 /* === Utility === */
 .text-center { text-align: center; }
 .flex-center {
