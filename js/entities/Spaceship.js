@@ -54,6 +54,7 @@ export default class Spaceship {
     this.time += dt * 3;
 
     // Smooth movement toward target
+    // Higher values make ships snap to their target position faster.
     const followRate = 8;
     const followSpeed = 1 - Math.exp(-followRate * dt);
     this.x += (this.targetX - this.x) * followSpeed;
