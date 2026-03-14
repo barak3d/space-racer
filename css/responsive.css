@@ -396,6 +396,11 @@
     max-width: 600px;
   }
 
+  .scene-scrollable {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
   .stat-card {
     padding: 20px;
   }

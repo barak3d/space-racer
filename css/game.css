@@ -346,6 +346,15 @@
   text-align: center;
   max-width: 500px;
   width: 90%;
+  padding-bottom: 32px;
+}
+
+/* Scrollable scene — for screens with variable-height content (results, collection) */
+.scene-scrollable {
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding-top: 32px;
+  padding-bottom: 32px;
 }
 
 .results-place {

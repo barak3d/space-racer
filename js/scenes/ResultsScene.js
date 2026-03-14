@@ -67,7 +67,7 @@ export default class ResultsScene {
 
   _createUI(position) {
     this.ui = this.game.createSceneUI();
-    this.ui.style.overflow = 'auto';
+    this.ui.classList.add('scene-scrollable');
 
     const container = document.createElement('div');
     container.className = 'results-container fade-in-up';
