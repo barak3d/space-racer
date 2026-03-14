@@ -9,6 +9,7 @@ import Spaceship from '../entities/Spaceship.js';
 import Station from '../entities/Station.js';
 import { createOpponents } from '../systems/AIOpponent.js';
 import cloudLeaderboard from '../systems/CloudLeaderboard.js';
+import { createStartOverButton } from '../ui/startOverHelper.js';
 
 export default class RaceScene {
   constructor(game) {
@@ -343,6 +344,7 @@ export default class RaceScene {
         <div class="hud-item">
           <span id="hud-position" class="hud-position first">#1</span>
         </div>
+        <div class="hud-item" id="hud-startover"></div>
       </div>
       <div class="race-track-info" id="racer-info">
         <div class="racer-info">
@@ -357,6 +359,12 @@ export default class RaceScene {
         `).join('')}
       </div>
     `;
+
+    // Mount start-over button into HUD
+    const startOverMount = this.ui.querySelector('#hud-startover');
+    if (startOverMount) {
+      startOverMount.appendChild(createStartOverButton(this.game));
+    }
   }
 
   _getPlayerPosition() {

@@ -135,6 +135,17 @@
   .level-label {
     font-size: 1.3rem;
   }
+
+  /* Start-over button — smaller on mobile */
+  .start-over-btn {
+    font-size: 0.9rem;
+    padding: 3px 8px;
+  }
+
+  .start-over-corner {
+    top: 8px;
+    left: 8px;
+  }
 }
 
 /* === Tablet (480px - 1024px) === */

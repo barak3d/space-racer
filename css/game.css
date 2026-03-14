@@ -918,6 +918,43 @@
   border-radius: 6px;
 }
 
+/* === Start Over Button === */
+.start-over-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  font-size: 1.1rem;
+  font-family: var(--font-family);
+  background: transparent;
+  border: 1px solid var(--text-secondary);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+  pointer-events: auto;
+  line-height: 1;
+}
+
+.start-over-btn:hover {
+  opacity: 1;
+  border-color: var(--neon-red);
+  color: var(--neon-red);
+  box-shadow: 0 0 8px rgba(255, 0, 64, 0.3);
+}
+
+.start-over-btn:active {
+  transform: scale(0.93);
+}
+
+.start-over-corner {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 25;
+}
+
 /* === Menu Screen === */
 .menu-actions-container {
   max-width: 320px;

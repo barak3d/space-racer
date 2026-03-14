@@ -4,6 +4,7 @@ import UI from '../data/uiStrings.js';
 import { PUZZLE_TYPES, GAME_SETTINGS, STATION_THEMES, GAME_MODES } from '../config.js';
 import gameState from '../systems/GameState.js';
 import audioManager from '../systems/AudioManager.js';
+import { createStartOverButton } from '../ui/startOverHelper.js';
 
 const AUTO_START_DELAY = 30; // seconds before auto-advancing to puzzle
 
@@ -75,6 +76,7 @@ export default class StationScene {
       `;
 
       this._setupReadyButton(state.practiceType);
+      this._addStartOverButton();
       return;
     }
 
@@ -131,6 +133,8 @@ export default class StationScene {
         });
       });
     });
+
+    this._addStartOverButton();
   }
 
   _enterCompetitionMode(data, state) {
@@ -171,6 +175,14 @@ export default class StationScene {
     `;
 
     this._setupReadyButton(nextType);
+    this._addStartOverButton();
+  }
+
+  /** Append start-over button to the scene UI (top-left corner) */
+  _addStartOverButton() {
+    const btn = createStartOverButton(this.game);
+    btn.classList.add('start-over-corner');
+    this.ui.appendChild(btn);
   }
 
   /** Shared setup for ready button + auto-start countdown (competition & practice-preset) */

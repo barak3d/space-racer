@@ -7,6 +7,7 @@ import { generatePuzzle } from '../systems/PuzzleGenerator.js';
 import { calculateScore, getMaxScoreForPuzzle, getMedal } from '../systems/ScoreSystem.js';
 import TimerSystem from '../systems/TimerSystem.js';
 import audioManager from '../systems/AudioManager.js';
+import { createStartOverButton } from '../ui/startOverHelper.js';
 
 export default class PuzzleScene {
   constructor(game) {
@@ -85,6 +86,11 @@ export default class PuzzleScene {
         this._onAnswer(index);
       });
     });
+
+    // Start-over button (top-left corner)
+    const startOverBtn = createStartOverButton(this.game);
+    startOverBtn.classList.add('start-over-corner');
+    this.ui.appendChild(startOverBtn);
   }
 
   _formatOption(opt) {
@@ -202,6 +208,7 @@ export default class PuzzleScene {
   }
 
   _proceed(wasCorrect) {
+    if (!this.ui) return; // guard: start-over may have fired during answer-feedback delay
     const newPuzzlesLeft = this.puzzlesLeft - 1;
 
     if (newPuzzlesLeft <= 0) {
