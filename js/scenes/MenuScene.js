@@ -6,6 +6,7 @@ import audioManager from '../systems/AudioManager.js';
 import gameState from '../systems/GameState.js';
 import { GAME_SETTINGS, DIFFICULTY_LEVELS } from '../config.js';
 import cloudLeaderboard from '../systems/CloudLeaderboard.js';
+import Alien from '../entities/Alien.js';
 
 export default class MenuScene {
   constructor(game) {
@@ -324,6 +325,8 @@ export default class MenuScene {
   _showCollection() {
     const state = gameState.getState();
     const collected = state.aliensCollected || [];
+    const playerName = state.playerName || '';
+    const COLLECTION_CANVAS_SIZE = 56;
 
     import('../data/alienCollection.js').then(({ default: ALIENS }) => {
       const overlay = document.createElement('div');
@@ -332,31 +335,62 @@ export default class MenuScene {
       overlay.style.zIndex = '50';
       overlay.style.overflow = 'auto';
 
-      let html = `<div style="max-width:500px;width:90%;text-align:center;">
-        <h2>${UI.collection.title}</h2>
-        <p class="game-subtitle">${UI.collection.collected} ${collected.length} ${UI.collection.of} ${ALIENS.length}</p>
-        <div class="collection-grid">`;
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'max-width:500px;width:90%;text-align:center;';
+
+      const title = document.createElement('h2');
+      title.textContent = playerName
+        ? `${UI.collection.title} — ${playerName}`
+        : UI.collection.title;
+      wrapper.appendChild(title);
+
+      const subtitle = document.createElement('p');
+      subtitle.className = 'game-subtitle';
+      subtitle.textContent = `${UI.collection.collected} ${collected.length} ${UI.collection.of} ${ALIENS.length}`;
+      wrapper.appendChild(subtitle);
+
+      const grid = document.createElement('div');
+      grid.className = 'collection-grid';
 
       for (const alien of ALIENS) {
         const unlocked = collected.includes(alien.id);
-        html += `<div class="collection-item ${unlocked ? '' : 'locked'}">
-          <div style="width:40px;height:40px;border-radius:50%;background:${unlocked ? alien.color : '#333'};
-            box-shadow:${unlocked ? `0 0 10px ${alien.color}` : 'none'};margin:0 auto;"></div>
-          <div class="collection-name">${unlocked ? alien.name : '🔒'}</div>
-        </div>`;
+        const item = document.createElement('div');
+        item.className = `collection-item${unlocked ? '' : ' locked'}`;
+
+        const canvasWrapper = document.createElement('div');
+        canvasWrapper.className = 'collection-canvas-wrapper';
+        const canvas = Alien.createCanvas(alien, COLLECTION_CANVAS_SIZE);
+        canvas.className = 'collection-alien-canvas';
+        canvasWrapper.appendChild(canvas);
+        if (!unlocked) {
+          const lockBadge = document.createElement('div');
+          lockBadge.className = 'collection-lock-badge';
+          lockBadge.textContent = '🔒';
+          canvasWrapper.appendChild(lockBadge);
+        }
+        item.appendChild(canvasWrapper);
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'collection-name';
+        nameEl.textContent = alien.name;
+        item.appendChild(nameEl);
+
+        grid.appendChild(item);
       }
 
-      html += `</div>
-        <button class="btn btn-small mt-md" id="btn-back-collection">${UI.collection.back}</button>
-      </div>`;
+      wrapper.appendChild(grid);
 
-      overlay.innerHTML = html;
-      this.game.overlay.appendChild(overlay);
-
-      overlay.querySelector('#btn-back-collection').addEventListener('click', () => {
+      const backBtn = document.createElement('button');
+      backBtn.className = 'btn btn-small mt-md';
+      backBtn.textContent = UI.collection.back;
+      backBtn.addEventListener('click', () => {
         audioManager.play('click');
         overlay.remove();
       });
+      wrapper.appendChild(backBtn);
+
+      overlay.appendChild(wrapper);
+      this.game.overlay.appendChild(overlay);
     });
   }
 

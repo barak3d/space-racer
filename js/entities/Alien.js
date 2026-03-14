@@ -159,6 +159,173 @@ export default class Alien {
         ctx.fill();
         break;
 
+      case 'flat':
+        // Flying saucer disc
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, r, r * 0.45, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        // Dome on top
+        ctx.beginPath();
+        ctx.ellipse(cx, cy - r * 0.1, r * 0.5, r * 0.4, 0, Math.PI, 0);
+        ctx.fill();
+        ctx.stroke();
+        break;
+
+      case 'comet': {
+        // Tail
+        const tailGrad = ctx.createLinearGradient(cx - r * 1.4, cy, cx, cy);
+        tailGrad.addColorStop(0, 'rgba(0,0,0,0)');
+        tailGrad.addColorStop(1, this.color);
+        ctx.fillStyle = tailGrad;
+        ctx.beginPath();
+        ctx.moveTo(cx - r * 1.4, cy);
+        ctx.lineTo(cx - r * 0.5, cy - r * 0.35);
+        ctx.lineTo(cx - r * 0.5, cy + r * 0.35);
+        ctx.closePath();
+        ctx.fill();
+        // Head
+        ctx.fillStyle = this.bodyColor;
+        ctx.strokeStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(cx + r * 0.1, cy, r * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        break;
+      }
+
+      case 'cloud': {
+        // Puffy cloud shape from overlapping circles
+        const cloudParts = [
+          [0, 0, r * 0.55],
+          [-r * 0.45, r * 0.2, r * 0.38],
+          [r * 0.45, r * 0.2, r * 0.38],
+          [-r * 0.25, -r * 0.28, r * 0.32],
+          [r * 0.25, -r * 0.28, r * 0.32],
+        ];
+        ctx.beginPath();
+        for (const [dx, dy, pr] of cloudParts) {
+          ctx.moveTo(cx + dx + pr, cy + dy);
+          ctx.arc(cx + dx, cy + dy, pr, 0, Math.PI * 2);
+        }
+        ctx.fill();
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 1.5;
+        for (const [dx, dy, pr] of cloudParts) {
+          ctx.beginPath();
+          ctx.arc(cx + dx, cy + dy, pr, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        break;
+      }
+
+      case 'spiral': {
+        // Two spiral arms
+        for (let arm = 0; arm < 2; arm++) {
+          const startAngle = arm * Math.PI;
+          ctx.beginPath();
+          for (let i = 0; i <= 40; i++) {
+            const t = i / 40;
+            const angle = startAngle + t * Math.PI * 2.5;
+            const radius = t * r * 0.85;
+            const px = cx + Math.cos(angle) * radius;
+            const py = cy + Math.sin(angle) * radius;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.strokeStyle = this.color;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+        // Bright centre
+        ctx.fillStyle = this.bodyColor;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        break;
+      }
+
+      case 'ring': {
+        // Main sphere
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 0.48, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        // Ring / orbit band
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, r * 0.95, r * 0.28, -Math.PI / 7, 0, Math.PI * 2);
+        ctx.stroke();
+        break;
+      }
+
+      case 'trophy': {
+        // Cup body
+        ctx.beginPath();
+        ctx.moveTo(cx - r * 0.58, cy - r * 0.65);
+        ctx.lineTo(cx + r * 0.58, cy - r * 0.65);
+        ctx.quadraticCurveTo(cx + r * 0.68, cy + r * 0.1, cx, cy + r * 0.5);
+        ctx.quadraticCurveTo(cx - r * 0.68, cy + r * 0.1, cx - r * 0.58, cy - r * 0.65);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        // Base
+        ctx.fillStyle = this.bodyColor;
+        ctx.strokeStyle = this.color;
+        ctx.beginPath();
+        ctx.roundRect(cx - r * 0.38, cy + r * 0.48, r * 0.76, r * 0.25, 3);
+        ctx.fill();
+        ctx.stroke();
+        // Handles
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(cx - r * 0.7, cy - r * 0.18, r * 0.22, Math.PI * 0.5, Math.PI * 1.5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx + r * 0.7, cy - r * 0.18, r * 0.22, -Math.PI * 0.5, Math.PI * 0.5);
+        ctx.stroke();
+        break;
+      }
+
+      case 'burst': {
+        // Sun-burst rays
+        const rayCount = 8;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 3;
+        for (let i = 0; i < rayCount; i++) {
+          const angle = (i * Math.PI * 2) / rayCount;
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(angle) * r * 0.42, cy + Math.sin(angle) * r * 0.42);
+          ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+          ctx.stroke();
+        }
+        ctx.fillStyle = this.bodyColor;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 0.42, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        break;
+      }
+
+      case 'double': {
+        // Twin connected bodies
+        const off = r * 0.38;
+        for (const dx of [-off, off]) {
+          ctx.beginPath();
+          ctx.arc(cx + dx, cy, r * 0.54, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+        break;
+      }
+
       default:
         // Fallback: circle
         ctx.beginPath();
@@ -264,6 +431,20 @@ export default class Alien {
       ctx.fill();
       ctx.restore();
     }
+  }
+
+  // Fraction of the canvas size used as the alien drawing size (leaves a small margin)
+  static get THUMBNAIL_SIZE_RATIO() { return 0.75; }
+
+  // Create a small canvas thumbnail for this alien (used in UI/HTML contexts)
+  static createCanvas(alienData, size = 60) {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const alien = new Alien(alienData);
+    alien.draw(ctx, size / 2, size / 2, size * Alien.THUMBNAIL_SIZE_RATIO);
+    return canvas;
   }
 
   playCollectAnimation() {

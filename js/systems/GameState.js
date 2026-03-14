@@ -2,6 +2,7 @@
 
 const STORAGE_KEY = 'starRace_gameState';
 const RACE_STORAGE_KEY = 'starRace_raceState';
+const ALIENS_KEY_PREFIX = 'starRace_aliens_';
 
 const DEFAULT_STATE = {
   playerName: '',
@@ -46,6 +47,8 @@ class GameState {
       if (raw) {
         const parsed = JSON.parse(raw);
         this.state = { ...DEFAULT_STATE, ...parsed };
+        // Load or migrate per-user alien collection
+        this._migrateOrLoadUserAliens();
       }
     } catch (e) {
       console.warn('Failed to load game state:', e);
@@ -53,15 +56,16 @@ class GameState {
   }
 
   reset() {
-    // Keep persistent data: player profile, aliensCollected, bestScores
+    // Keep persistent data: player profile, bestScores (aliens now live in per-user key)
     const persistent = {
       playerName: this.state.playerName || '',
       selectedColor: this.state.selectedColor || DEFAULT_STATE.selectedColor,
       difficultyLevel: this.state.difficultyLevel || DEFAULT_STATE.difficultyLevel,
-      aliensCollected: [...(this.state.aliensCollected || [])],
       bestScores: [...(this.state.bestScores || [])],
     };
     this.state = { ...DEFAULT_STATE, ...persistent };
+    // Reload this player's alien collection from per-user storage
+    this.state.aliensCollected = this._loadUserAliens();
     try { localStorage.removeItem(RACE_STORAGE_KEY); } catch (e) { /* ignore */ }
     this.save();
   }
@@ -72,6 +76,11 @@ class GameState {
 
   // מחיקה מוחלטת — כולל אוסף וניקוד
   fullReset() {
+    // Clear this player's alien collection from per-user storage
+    const key = this._getUserAlienKey();
+    if (key) {
+      try { localStorage.removeItem(key); } catch (e) { /* ignore */ }
+    }
     this.state = { ...DEFAULT_STATE };
     try { localStorage.removeItem(RACE_STORAGE_KEY); } catch (e) { /* ignore */ }
     this.save();
@@ -114,6 +123,8 @@ class GameState {
   // Setters
   setPlayerName(name) {
     this.state.playerName = name;
+    // Load this player's personal alien collection
+    this.state.aliensCollected = this._loadUserAliens();
     this.save();
   }
 
@@ -176,7 +187,53 @@ class GameState {
   addAlien(id) {
     if (!this.state.aliensCollected.includes(id)) {
       this.state.aliensCollected.push(id);
+      this._saveUserAliens();
       this.save();
+    }
+  }
+
+  // === Per-user alien collection helpers ===
+
+  _getUserAlienKey() {
+    const name = (this.state.playerName || '').trim();
+    if (!name) return null;
+    // Encode to avoid key collisions or special-character issues in localStorage keys
+    const safe = encodeURIComponent(name.toLowerCase());
+    return `${ALIENS_KEY_PREFIX}${safe}`;
+  }
+
+  _loadUserAliens() {
+    const key = this._getUserAlienKey();
+    if (!key) return [];
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  _saveUserAliens() {
+    const key = this._getUserAlienKey();
+    if (!key) return;
+    try {
+      localStorage.setItem(key, JSON.stringify(this.state.aliensCollected));
+    } catch (e) {
+      console.warn('Failed to save user aliens:', e);
+    }
+  }
+
+  // Migrate old shared collection into the current user's per-user key (one-time)
+  _migrateOrLoadUserAliens() {
+    const key = this._getUserAlienKey();
+    if (!key) return;
+    const existing = localStorage.getItem(key);
+    if (existing === null && (this.state.aliensCollected || []).length > 0) {
+      // No per-user key yet — migrate the collection that was stored in the main state
+      this._saveUserAliens();
+    } else {
+      // Per-user key exists (or no aliens to migrate): use the per-user collection
+      this.state.aliensCollected = this._loadUserAliens();
     }
   }
 
