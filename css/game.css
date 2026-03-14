@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
+  padding: 12px 20px 12px 68px;
   background: linear-gradient(to bottom, rgba(10, 0, 32, 0.9), transparent);
   z-index: 20;
   direction: rtl;
@@ -951,7 +951,7 @@
 .start-over-corner {
   position: absolute;
   top: 12px;
-  left: 12px;
+  left: 68px;
   z-index: 25;
 }
 
