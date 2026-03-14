@@ -22,9 +22,9 @@ export default class Spaceship {
     this.time += dt * 3;
 
     // Smooth movement toward target
-    const lerpSpeed = 3 * dt;
-    this.x += (this.targetX - this.x) * lerpSpeed;
-    this.y += (this.targetY - this.y) * lerpSpeed;
+    const followSpeed = 1 - Math.exp(-8 * dt);
+    this.x += (this.targetX - this.x) * followSpeed;
+    this.y += (this.targetY - this.y) * followSpeed;
 
     // Hover effect
     const hoverY = Math.sin(this.time) * this.hoverAmplitude;
@@ -46,6 +46,7 @@ export default class Spaceship {
   }
 
   setBoost(active) {
+    if (this.boosting === active) return;
     this.boosting = active;
     this.boostTime = 0;
   }

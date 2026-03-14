@@ -247,6 +247,16 @@ export default class RaceScene {
     return currentStationX + this.playerProgress * (nextStationX - currentStationX);
   }
 
+  _getPlayerRaceProgress() {
+    const segmentSize = 1 / (GAME_SETTINGS.totalStations + 1);
+
+    if (this.playerAtStation || this.playerProgress >= 1) {
+      return Math.min(1, this.playerStation * segmentSize);
+    }
+
+    return Math.min(1, (this.playerStation + this.playerProgress) * segmentSize);
+  }
+
   _applyTheme(stationIndex) {
     const idx = Math.min(stationIndex, STATION_THEMES.length - 1);
     this.currentTheme = STATION_THEMES[idx];
@@ -262,18 +272,11 @@ export default class RaceScene {
     const level = state.difficultyLevel || 1;
     if (this._stationEntryTime > 0) {
       const timeInStation = (Date.now() - this._stationEntryTime) / 1000;
-      console.log('[AI] Returning from station. Time spent:', timeInStation.toFixed(1) + 's');
+      const playerRaceProgress = this._getPlayerRaceProgress();
       this.aiOpponents.forEach((ai, i) => {
-        console.log('[AI]  Before advance:', ai.name, 'station:', ai.station, 'progress:', ai.progress.toFixed(3), 'total:', ai.totalProgress.toFixed(3));
-        ai.advanceByTime(timeInStation, this.stationsCompleted, level);
-        console.log('[AI]  After advance:', ai.name, 'station:', ai.station, 'progress:', ai.progress.toFixed(3), 'total:', ai.totalProgress.toFixed(3));
+        ai.advanceByTime(timeInStation, playerRaceProgress, level);
       });
       this._stationEntryTime = 0;
-    } else {
-      console.log('[AI] WARNING: _stationEntryTime was 0! AI opponents:', this.aiOpponents.length);
-      this.aiOpponents.forEach((ai, i) => {
-        console.log('[AI]  Current state:', ai.name, 'station:', ai.station, 'progress:', ai.progress.toFixed(3), 'total:', ai.totalProgress.toFixed(3));
-      });
     }
 
     if (data.stationComplete) {
@@ -362,7 +365,7 @@ export default class RaceScene {
   }
 
   _getPlayerPosition() {
-    const playerProg = this.stationsCompleted / GAME_SETTINGS.totalStations + this.playerProgress / (GAME_SETTINGS.totalStations + 1);
+    const playerProg = this._getPlayerRaceProgress();
     let position = 1;
     for (const ai of this.aiOpponents) {
       if (ai.getProgress() > playerProg) position++;
@@ -460,10 +463,12 @@ export default class RaceScene {
     }
 
     // Update AI
+    const playerRaceProgress = this._getPlayerRaceProgress();
     this.aiOpponents.forEach((ai, i) => {
-      ai.update(dt, this.stationsCompleted, level);
+      ai.update(dt, playerRaceProgress, level);
       const aiX = ai.getTrackPosition(this.trackStartX, this.trackEndX);
       this.aiShips[i].setPosition(aiX, this.trackY + 20 + i * 30);
+      this.aiShips[i].setBoost(ai.isBoosting());
     });
 
     // Update HUD
