@@ -1,7 +1,7 @@
 // ResultsScene.js — מסך תוצאות + תגמולים
 
 import UI from '../data/uiStrings.js';
-import { COLORS } from '../config.js';
+import { COLORS, GAME_SETTINGS } from '../config.js';
 import { default as gameState } from '../systems/GameState.js';
 import audioManager from '../systems/AudioManager.js';
 import ALIENS, { checkAlienUnlock } from '../data/alienCollection.js';
@@ -39,8 +39,10 @@ export default class ResultsScene {
     this.newAliens = [];
     const state = gameState.getState();
     const collected = state.aliensCollected || [];
+    const max = GAME_SETTINGS.maxNewAliensPerGame;
 
     for (const alienData of ALIENS) {
+      if (this.newAliens.length >= max) break;
       if (!collected.includes(alienData.id) && checkAlienUnlock(alienData, state)) {
         this.newAliens.push(alienData);
         gameState.addAlien(alienData.id);
