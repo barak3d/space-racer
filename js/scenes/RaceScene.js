@@ -173,6 +173,8 @@ export default class RaceScene {
         ai.puzzleAttempts = saved.aiProgress[i].puzzleAttempts || 0;
         ai.stationTimer = saved.aiProgress[i].stationTimer || 0;
         ai.finished = saved.aiProgress[i].finished || false;
+        ai.score = saved.aiProgress[i].score || 0;
+        ai._puzzleElapsed = saved.aiProgress[i]._puzzleElapsed || 0;
       }
       return ship;
     });
@@ -221,6 +223,8 @@ export default class RaceScene {
         puzzleAttempts: ai.puzzleAttempts,
         stationTimer: ai.stationTimer,
         finished: ai.finished,
+        score: ai.score,
+        _puzzleElapsed: ai._puzzleElapsed,
       })),
       savedAt: Date.now(),
     };
@@ -367,10 +371,10 @@ export default class RaceScene {
   }
 
   _getPlayerPosition() {
-    const playerProg = this._getPlayerRaceProgress();
+    const playerScore = gameState.getState().score;
     let position = 1;
     for (const ai of this.aiOpponents) {
-      if (ai.getProgress() > playerProg) position++;
+      if (ai.getScore() > playerScore) position++;
     }
     return position;
   }
@@ -407,6 +411,10 @@ export default class RaceScene {
       this.game.switchScene('results', {
         position,
         finalScore: state.score,
+        competitors: this.aiOpponents.map(ai => ({
+          name: ai.name,
+          score: ai.getScore(),
+        })),
       });
     }, 1500);
   }

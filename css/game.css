@@ -395,6 +395,55 @@
   margin-top: 4px;
 }
 
+.results-leaderboard {
+  margin: 24px 0;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.results-leaderboard h3 {
+  margin: 0 0 12px;
+  text-align: center;
+  color: var(--neon-gold);
+}
+
+.leaderboard-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  direction: rtl;
+}
+
+.leaderboard-row + .leaderboard-row {
+  margin-top: 4px;
+}
+
+.leaderboard-player {
+  background: rgba(0, 255, 255, 0.08);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.leaderboard-medal {
+  font-size: 1.2rem;
+  min-width: 28px;
+  text-align: center;
+}
+
+.leaderboard-name {
+  flex: 1;
+  font-weight: 700;
+}
+
+.leaderboard-score {
+  font-weight: 900;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 6px var(--neon-cyan);
+}
+
 .new-aliens-section {
   margin: 24px 0;
   padding: 16px;
