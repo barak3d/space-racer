@@ -502,6 +502,10 @@
   flex-wrap: wrap;
 }
 
+.menu-title-spacer {
+  margin-top: 8vh;
+}
+
 /* === Setup Screen === */
 .setup-container {
   max-width: 400px;
