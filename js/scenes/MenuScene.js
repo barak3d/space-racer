@@ -7,6 +7,7 @@ import gameState from '../systems/GameState.js';
 import { GAME_SETTINGS, DIFFICULTY_LEVELS } from '../config.js';
 import cloudLeaderboard from '../systems/CloudLeaderboard.js';
 import Alien from '../entities/Alien.js';
+import alienEffects from '../systems/AlienEffects.js';
 
 export default class MenuScene {
   constructor(game) {
@@ -350,6 +351,13 @@ export default class MenuScene {
         const unlocked = collected.includes(alien.id);
         const item = document.createElement('div');
         item.className = `collection-item${unlocked ? '' : ' locked'}`;
+
+        if (unlocked) {
+          item.addEventListener('click', () => {
+            audioManager.play('click');
+            alienEffects.trigger(alien.id, alien.color, item);
+          });
+        }
 
         const canvasWrapper = document.createElement('div');
         canvasWrapper.className = 'collection-canvas-wrapper';
