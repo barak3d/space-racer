@@ -1,12 +1,20 @@
 // PuzzleGenerator.js — מחולל חידות לכל 6 הסוגים
 
 import { DIFFICULTY_LEVELS, PUZZLE_TYPES, STATION_SCALE, STATION_TIME_OFFSET } from '../config.js';
-import { getRandomWord, getAllWords } from '../data/hebrewWords.js';
+import { getRandomWord, getAllWords, resetUsedWords } from '../data/hebrewWords.js';
 
 // Pre-compute base-letter forms of every word in the bank once at module load.
 // Used by generateWordPuzzle to reject wrong-letter candidates that would form
 // another valid word when placed at the blank position.
 const ALL_BASE_WORD_FORMS = new Set(getAllWords().map(w => w.word.replace(/[\u0591-\u05C7]/g, '')));
+
+// Track used questions across all puzzle types within a game session
+const usedQuestions = new Set();
+
+export function resetUsedPuzzles() {
+  usedQuestions.clear();
+  resetUsedWords();
+}
 
 // Scale number ranges by station: station 1 = warm-up (30%), station 5 = full difficulty (100%)
 // Also raises the minimum operand so later stations produce bigger numbers
@@ -356,15 +364,28 @@ function generateWordPuzzle(level, station) {
 
 // === Main Entry Point ===
 export function generatePuzzle(type, level, station = 5) {
-  switch (type) {
-    case 'addition': return generateAddition(level, station);
-    case 'subtraction': return generateSubtraction(level, station);
-    case 'multiplication': return generateMultiplication(level, station);
-    case 'comparison': return generateComparison(level, station);
-    case 'sequence': return generateSequence(level, station);
-    case 'words': return generateWordPuzzle(level, station);
-    default: return generateAddition(level, station);
+  const generator = {
+    addition: generateAddition,
+    subtraction: generateSubtraction,
+    multiplication: generateMultiplication,
+    comparison: generateComparison,
+    sequence: generateSequence,
+    words: generateWordPuzzle,
+  }[type] || generateAddition;
+
+  // Retry up to 20 times to avoid duplicate questions within a game session
+  let puzzle;
+  for (let attempt = 0; attempt < 20; attempt++) {
+    puzzle = generator(level, station);
+    if (!puzzle) return null;
+    if (!usedQuestions.has(puzzle.question)) {
+      usedQuestions.add(puzzle.question);
+      return puzzle;
+    }
   }
+  // Fallback: return last generated puzzle even if duplicate
+  if (puzzle) usedQuestions.add(puzzle.question);
+  return puzzle;
 }
 
-export default { generatePuzzle };
+export default { generatePuzzle, resetUsedPuzzles };
