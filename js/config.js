@@ -26,7 +26,7 @@ export const DIFFICULTY_LEVELS = {
     label: 'א\'',
     addition: { min: 1, max: 20 },
     subtraction: { min: 1, max: 20 },
-    multiplication: null,
+    multiplication: { min: 1, max: 5 },
     comparison: { min: 1, max: 10, ops: ['+'] },
     sequence: { steps: [1, 2], max: 30 },
     words: 'easy',
@@ -59,7 +59,7 @@ export const DIFFICULTY_LEVELS = {
 export const PUZZLE_TYPES = {
   addition: { id: 'addition', name: 'חִיבּוּר', icon: '➕', availableFrom: 1 },
   subtraction: { id: 'subtraction', name: 'חִיסּוּר', icon: '➖', availableFrom: 1 },
-  multiplication: { id: 'multiplication', name: 'כֶּפֶל', icon: '✖️', availableFrom: 2 },
+  multiplication: { id: 'multiplication', name: 'כֶּפֶל', icon: '✖️', availableFrom: 1 },
   comparison: { id: 'comparison', name: 'הַשְׁוָאָה', icon: '⚖️', availableFrom: 1 },
   sequence: { id: 'sequence', name: 'סִדְרוֹת', icon: '🔢', availableFrom: 1 },
   words: { id: 'words', name: 'מִלִּים', icon: '📖', availableFrom: 1 },
