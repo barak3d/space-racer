@@ -7,6 +7,7 @@ import audioManager from '../systems/AudioManager.js';
 import ALIENS, { checkAlienUnlock } from '../data/alienCollection.js';
 import Alien from '../entities/Alien.js';
 import StarField from '../entities/StarField.js';
+import alienEffects from '../systems/AlienEffects.js';
 
 export default class ResultsScene {
   constructor(game) {
@@ -149,6 +150,11 @@ export default class ResultsScene {
       for (const alienData of this.newAliens) {
         const alienCard = document.createElement('div');
         alienCard.className = 'new-alien-card alien-bounce';
+
+        alienCard.addEventListener('click', () => {
+          audioManager.play('click');
+          alienEffects.trigger(alienData.id, alienData.color, alienCard);
+        });
 
         const canvas = Alien.createCanvas(alienData, 70);
         canvas.className = 'new-alien-canvas';
