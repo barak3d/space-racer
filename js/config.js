@@ -88,6 +88,7 @@ export const GAME_SETTINGS = {
   brakeSpeed: 0.5,
   streakBonusThreshold: 3,
   streakBonusMultiplier: 1.5,
+  maxNewAliensPerGame: 3,
 };
 
 export const PUZZLE_TYPE_MULTIPLIERS = {
