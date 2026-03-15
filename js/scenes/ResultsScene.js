@@ -105,6 +105,34 @@ export default class ResultsScene {
     this._addStat(stats, longestStreak, UI.results.longestStreak);
     container.appendChild(stats);
 
+    // Leaderboard
+    if (data.competitors && data.competitors.length > 0) {
+      const leaderboard = document.createElement('div');
+      leaderboard.className = 'results-leaderboard fade-in-up';
+
+      const lbTitle = document.createElement('h3');
+      lbTitle.textContent = UI.results.leaderboard;
+      leaderboard.appendChild(lbTitle);
+
+      const playerScore = state.score || data.finalScore || 0;
+      const entries = [
+        { name: state.playerName || 'שַׂחְקָן', score: playerScore, isPlayer: true },
+        ...data.competitors.map(c => ({ name: c.name, score: c.score, isPlayer: false })),
+      ].sort((a, b) => b.score - a.score);
+
+      const medals = ['🏆', '🥈', '🥉'];
+      entries.forEach((entry, i) => {
+        const row = document.createElement('div');
+        row.className = `leaderboard-row${entry.isPlayer ? ' leaderboard-player' : ''}`;
+        row.innerHTML = `<span class="leaderboard-medal">${medals[i] || ''}</span>`
+          + `<span class="leaderboard-name">${entry.name}</span>`
+          + `<span class="leaderboard-score">${entry.score}</span>`;
+        leaderboard.appendChild(row);
+      });
+
+      container.appendChild(leaderboard);
+    }
+
     // New aliens
     if (this.newAliens.length > 0) {
       const aliensSection = document.createElement('div');

@@ -49,6 +49,8 @@ export default class AIOpponent {
     this.puzzleAttempts = 0;
     this.finished = false;
     this.totalProgress = 0; // 0-1 overall race progress
+    this.score = 0;
+    this._puzzleElapsed = 0;
     this._initializeRaceMotion();
   }
 
@@ -61,6 +63,8 @@ export default class AIOpponent {
     this.puzzleAttempts = 0;
     this.finished = false;
     this.totalProgress = 0;
+    this.score = 0;
+    this._puzzleElapsed = 0;
     this._initializeRaceMotion();
   }
 
@@ -92,6 +96,7 @@ export default class AIOpponent {
     if (this.solvingStation) {
       // AI is "solving" puzzles at a station
       this.stationTimer += dt;
+      this._puzzleElapsed += dt;
       this.boosting = false;
 
       if (!this.nextSolveTime) {
@@ -108,6 +113,16 @@ export default class AIOpponent {
 
         if (solvedCurrentPuzzle) {
           this.puzzlesSolved++;
+          if (gotRight) {
+            const totalTime = lvlCfg.timePerPuzzle;
+            const timeLeft = Math.max(0, totalTime - this._puzzleElapsed);
+            const base = GAME_SETTINGS.scorePerCorrect;
+            const timeBonus = Math.round(
+              (timeLeft / totalTime) * 100 * GAME_SETTINGS.timeBonusMultiplier * difficultyLevel,
+            );
+            this.score += base + timeBonus;
+          }
+          this._puzzleElapsed = 0;
           this.puzzleAttempts = 0;
         }
 
@@ -166,6 +181,7 @@ export default class AIOpponent {
         this.stationTimer = 0;
         this.puzzlesSolved = 0;
         this.puzzleAttempts = 0;
+        this._puzzleElapsed = 0;
         this.nextSolveTime = this._createSolveTime(lvlCfg, progressGap);
         this.boosting = false;
       }
@@ -181,6 +197,10 @@ export default class AIOpponent {
 
   getProgress() {
     return this.totalProgress;
+  }
+
+  getScore() {
+    return this.score;
   }
 
   getStation() {
