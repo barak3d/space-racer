@@ -1,6 +1,6 @@
 // GameState.js — ניהול מצב משחק (localStorage)
 
-import { resetUsedWords } from '../data/hebrewWords.js';
+import { resetUsedPuzzles } from './PuzzleGenerator.js';
 
 const STORAGE_KEY = 'starRace_gameState';
 const RACE_STORAGE_KEY = 'starRace_raceState';
@@ -67,7 +67,7 @@ class GameState {
     this.state = { ...DEFAULT_STATE, ...persistent };
     // Reload this player's alien collection from per-user storage
     this.state.aliensCollected = this._loadUserAliens();
-    resetUsedWords();
+    resetUsedPuzzles();
     try { localStorage.removeItem(RACE_STORAGE_KEY); } catch (e) { /* ignore */ }
     this.save();
   }
@@ -84,7 +84,7 @@ class GameState {
       try { localStorage.removeItem(key); } catch (e) { /* ignore */ }
     }
     this.state = { ...DEFAULT_STATE };
-    resetUsedWords();
+    resetUsedPuzzles();
     try { localStorage.removeItem(RACE_STORAGE_KEY); } catch (e) { /* ignore */ }
     this.save();
   }
