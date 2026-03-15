@@ -40,10 +40,11 @@ export default class ResultsScene {
     const state = gameState.getState();
     const collected = state.aliensCollected || [];
     const max = GAME_SETTINGS.maxNewAliensPerGame;
+    const racePosition = this.data.position;
 
     for (const alienData of ALIENS) {
       if (this.newAliens.length >= max) break;
-      if (!collected.includes(alienData.id) && checkAlienUnlock(alienData, state)) {
+      if (!collected.includes(alienData.id) && checkAlienUnlock(alienData, state, { racePosition })) {
         this.newAliens.push(alienData);
         gameState.addAlien(alienData.id);
       }

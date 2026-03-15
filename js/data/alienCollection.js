@@ -225,8 +225,8 @@ const ALIENS = [
     shape: 'ring',
     eyes: 2,
     antenna: true,
-    unlockCondition: '20_correct',
-    unlockDescription: 'עֲנֵה נָכוֹן עַל 20 חִידוֹת',
+    unlockCondition: '15_correct',
+    unlockDescription: 'עֲנֵה נָכוֹן עַל כָּל 15 הַחִידוֹת בַּמִּשְׂחָק',
     description: 'חַיְזָר עִם טַבַּעוֹת כְּמוֹ שַׁבְּתַאי',
   },
   {
@@ -246,7 +246,7 @@ const ALIENS = [
 export default ALIENS;
 
 // Helper: check if an alien should be unlocked based on game state
-export function checkAlienUnlock(alien, gameState) {
+export function checkAlienUnlock(alien, gameState, extras = {}) {
   const h = gameState.puzzleHistory || [];
   const condition = alien.unlockCondition;
 
@@ -284,8 +284,8 @@ export function checkAlienUnlock(alien, gameState) {
     case 'score_200':
       return (gameState.score || 0) >= 200;
 
-    case '20_correct':
-      return h.filter(p => p.correct).length >= 20;
+    case '15_correct':
+      return h.filter(p => p.correct).length >= 15;
 
     case 'complete_station':
       return gameState.currentStation > 1 || gameState.currentStationPuzzlesCompleted >= 3;
@@ -301,7 +301,7 @@ export function checkAlienUnlock(alien, gameState) {
       return h.some(p => p.correct && p.timeMs < 5000);
 
     case 'win_race':
-      return (gameState.bestScores || []).length > 0;
+      return extras.racePosition === 1;
 
     case '10_correct':
       return h.filter(p => p.correct).length >= 10;
