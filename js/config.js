@@ -24,10 +24,10 @@ export const DIFFICULTY_LEVELS = {
   1: {
     name: 'כִּתָּה א\'',
     label: 'א\'',
-    addition: { min: 1, max: 30 },
+    addition: { min: 1, max: 20 },
     subtraction: { min: 1, max: 20 },
     multiplication: null,
-    comparison: { min: 1, max: 30, ops: ['+'] },
+    comparison: { min: 1, max: 10, ops: ['+'] },
     sequence: { steps: [1, 2], max: 30 },
     words: 'easy',
     timePerPuzzle: 30,
