@@ -1,6 +1,7 @@
 // AIOpponent.js — לוגיקת חלליות מחשב (יריבות)
 
 import { AI_OPPONENTS, GAME_SETTINGS, DIFFICULTY_LEVELS } from '../config.js';
+import { calculateScore } from './ScoreSystem.js';
 
 const AI_TRAVEL_BASE_PACE = 0.34;
 const AI_LAUNCH_BOOST = 0.08;
@@ -116,11 +117,7 @@ export default class AIOpponent {
           if (gotRight) {
             const totalTime = lvlCfg.timePerPuzzle;
             const timeLeft = Math.max(0, totalTime - this._puzzleElapsed);
-            const base = GAME_SETTINGS.scorePerCorrect;
-            const timeBonus = Math.round(
-              (timeLeft / totalTime) * 100 * GAME_SETTINGS.timeBonusMultiplier * difficultyLevel,
-            );
-            this.score += base + timeBonus;
+            this.score += calculateScore(timeLeft, totalTime, difficultyLevel, null);
           }
           this._puzzleElapsed = 0;
           this.puzzleAttempts = 0;
