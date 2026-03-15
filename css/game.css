@@ -887,7 +887,7 @@
   transform: scale(0.93);
 }
 
-.collection-item:hover {
+.collection-item:not(.locked):hover {
   transform: scale(1.05);
 }
 

@@ -541,7 +541,7 @@ class AlienEffects {
             maxLife: 2.5,
             size: this._rand(3, 6),
             trail: [],
-            cx, cy: cy,
+            cx, cy,
             color,
             update(p, dt) {
               p.angle += p.angularSpeed * dt;
@@ -626,7 +626,7 @@ class AlienEffects {
             rotation: 0,
             rotSpeed: this._rand(1, 2.5),
             color: i % 5 === 0 ? '#fff' : color,
-            cx, cy: cy,
+            cx, cy,
             update(p, dt) {
               p.progress = Math.min(1, p.progress + dt * 0.8);
               p.rotation += p.rotSpeed * dt;
