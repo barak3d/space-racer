@@ -459,6 +459,16 @@
   gap: 4px;
   padding: 12px;
   margin: 4px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.new-alien-card:hover {
+  transform: scale(1.08);
+}
+
+.new-alien-card:active {
+  transform: scale(0.95);
 }
 
 .new-alien-icon {
@@ -869,6 +879,14 @@
   transition: transform 0.2s;
 }
 
+.collection-item:not(.locked) {
+  cursor: pointer;
+}
+
+.collection-item:not(.locked):active {
+  transform: scale(0.93);
+}
+
 .collection-item:hover {
   transform: scale(1.05);
 }
@@ -1241,4 +1259,15 @@
   .leaderboard-score { font-size: 0.85rem; }
   .leaderboard-level { font-size: 0.8rem; }
   .leaderboard-name { font-size: 0.85rem; }
+}
+
+/* === Alien Effects Overlay Canvas === */
+.alien-effects-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
 }
