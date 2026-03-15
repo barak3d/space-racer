@@ -117,8 +117,8 @@ const ALIENS = [
     shape: 'square',
     eyes: 2,
     antenna: false,
-    unlockCondition: '3_multiplication',
-    unlockDescription: 'פְּתוֹר 3 תַּרְגִּילֵי כֶּפֶל',
+    unlockCondition: 'score_300',
+    unlockDescription: 'הַגִּיעַ לְ-300 נְקוּדּוֹת',
     description: 'חַיְזָר דִּיגִיטָלִי מְרוּבָּע',
   },
   {
@@ -269,9 +269,6 @@ export function checkAlienUnlock(alien, gameState, extras = {}) {
     case '5_subtraction':
       return h.filter(p => p.type === 'subtraction' && p.correct).length >= 5;
 
-    case '3_multiplication':
-      return h.filter(p => p.type === 'multiplication' && p.correct).length >= 3;
-
     case '5_comparison':
       return h.filter(p => p.type === 'comparison' && p.correct).length >= 5;
 
@@ -305,6 +302,9 @@ export function checkAlienUnlock(alien, gameState, extras = {}) {
 
     case '10_correct':
       return h.filter(p => p.correct).length >= 10;
+
+    case 'score_300':
+      return (gameState.score || 0) >= 300;
 
     case 'score_500':
       return (gameState.score || 0) >= 500;
