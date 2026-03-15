@@ -29,7 +29,7 @@ export default class MenuScene {
     this.ui = this.game.createSceneUI();
     this.ui.innerHTML = `
       <div class="flex-col gap-lg" style="z-index:2; position:relative;">
-        <div class="game-title title-glow" style="margin-top:8vh;">
+        <div class="game-title title-glow menu-title-spacer">
           ${UI.gameName}
         </div>
         <div class="game-subtitle">🚀 ⭐ 🛸</div>
