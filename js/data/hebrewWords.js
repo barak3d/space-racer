@@ -94,6 +94,13 @@ const HEBREW_WORDS = {
 
 export default HEBREW_WORDS;
 
+// Track used words within a game session to avoid repeats
+const usedWords = new Set();
+
+export function resetUsedWords() {
+  usedWords.clear();
+}
+
 // Helper: get words by difficulty level
 export function getWordsByLevel(level) {
   switch (level) {
@@ -104,10 +111,15 @@ export function getWordsByLevel(level) {
   }
 }
 
-// Helper: get a random word
+// Helper: get a random word (avoids repeats within a game session)
 export function getRandomWord(level) {
   const words = getWordsByLevel(level);
-  return words[Math.floor(Math.random() * words.length)];
+  const available = words.filter(w => !usedWords.has(w.word));
+  // If all words at this level were used, allow repeats
+  const pool = available.length > 0 ? available : words;
+  const wordData = pool[Math.floor(Math.random() * pool.length)];
+  usedWords.add(wordData.word);
+  return wordData;
 }
 
 // Helper: get all words from every level
