@@ -1,6 +1,7 @@
 // AIOpponent.js — לוגיקת חלליות מחשב (יריבות)
 
 import { AI_OPPONENTS, GAME_SETTINGS, DIFFICULTY_LEVELS } from '../config.js';
+import { calculateScore } from './ScoreSystem.js';
 
 const AI_TRAVEL_BASE_PACE = 0.34;
 const AI_LAUNCH_BOOST = 0.08;
@@ -49,6 +50,8 @@ export default class AIOpponent {
     this.puzzleAttempts = 0;
     this.finished = false;
     this.totalProgress = 0; // 0-1 overall race progress
+    this.score = 0;
+    this._puzzleElapsed = 0;
     this._initializeRaceMotion();
   }
 
@@ -61,6 +64,8 @@ export default class AIOpponent {
     this.puzzleAttempts = 0;
     this.finished = false;
     this.totalProgress = 0;
+    this.score = 0;
+    this._puzzleElapsed = 0;
     this._initializeRaceMotion();
   }
 
@@ -92,6 +97,7 @@ export default class AIOpponent {
     if (this.solvingStation) {
       // AI is "solving" puzzles at a station
       this.stationTimer += dt;
+      this._puzzleElapsed += dt;
       this.boosting = false;
 
       if (!this.nextSolveTime) {
@@ -108,6 +114,12 @@ export default class AIOpponent {
 
         if (solvedCurrentPuzzle) {
           this.puzzlesSolved++;
+          if (gotRight) {
+            const totalTime = lvlCfg.timePerPuzzle;
+            const timeLeft = Math.max(0, totalTime - this._puzzleElapsed);
+            this.score += calculateScore(timeLeft, totalTime, difficultyLevel, null);
+          }
+          this._puzzleElapsed = 0;
           this.puzzleAttempts = 0;
         }
 
@@ -166,6 +178,7 @@ export default class AIOpponent {
         this.stationTimer = 0;
         this.puzzlesSolved = 0;
         this.puzzleAttempts = 0;
+        this._puzzleElapsed = 0;
         this.nextSolveTime = this._createSolveTime(lvlCfg, progressGap);
         this.boosting = false;
       }
@@ -181,6 +194,10 @@ export default class AIOpponent {
 
   getProgress() {
     return this.totalProgress;
+  }
+
+  getScore() {
+    return this.score;
   }
 
   getStation() {
