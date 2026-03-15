@@ -106,7 +106,8 @@ export default class ResultsScene {
     container.appendChild(stats);
 
     // Leaderboard
-    if (data.competitors && data.competitors.length > 0) {
+    const competitors = this.data.competitors;
+    if (competitors && competitors.length > 0) {
       const leaderboard = document.createElement('div');
       leaderboard.className = 'results-leaderboard fade-in-up';
 
@@ -114,10 +115,10 @@ export default class ResultsScene {
       lbTitle.textContent = UI.results.leaderboard;
       leaderboard.appendChild(lbTitle);
 
-      const playerScore = state.score || data.finalScore || 0;
+      const playerScore = state.score || this.data.finalScore || 0;
       const entries = [
         { name: state.playerName || 'שַׂחְקָן', score: playerScore, isPlayer: true },
-        ...data.competitors.map(c => ({ name: c.name, score: c.score, isPlayer: false })),
+        ...competitors.map(c => ({ name: c.name, score: c.score, isPlayer: false })),
       ].sort((a, b) => b.score - a.score);
 
       const medals = ['🏆', '🥈', '🥉'];
