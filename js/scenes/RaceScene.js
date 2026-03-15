@@ -399,11 +399,12 @@ export default class RaceScene {
       gameMode: state.gameMode || GAME_MODES.practice,
     };
 
-    gameState.addBestScore(entry);
     gameState.clearRaceState(); // מירוץ הסתיים — מחיקת שמירה
 
-    // Submit to global cloud leaderboard only in competition mode (fire-and-forget)
+    // Save to leaderboard only in competition mode
     if (state.gameMode === GAME_MODES.competition) {
+      gameState.addBestScore(entry);
+      // Submit to global cloud leaderboard (fire-and-forget)
       cloudLeaderboard.submitScore(entry);
     }
 
