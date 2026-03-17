@@ -153,8 +153,9 @@ class AudioManager {
           this._startMusicSource(filePath);
         }
       })
-      .catch(() => {
+      .catch((err) => {
         this._musicLoading.delete(filePath);
+        console.warn('AudioManager: failed to load music', filePath, err.message);
       });
   }
 
