@@ -1,6 +1,6 @@
 // Service Worker — מירוץ הכוכבים — משחק אופליין
 
-const CACHE_NAME = 'star-race-v4';
+const CACHE_NAME = 'star-race-v5';
 
 const ASSETS = [
   './',
@@ -34,6 +34,11 @@ const ASSETS = [
   './js/scenes/StationScene.js',
   './js/scenes/PuzzleScene.js',
   './js/scenes/ResultsScene.js',
+  './assets/music/space-ambience-loop.mp3',
+  './assets/music/deep-tones-loop.mp3',
+  './assets/music/calm-cold-space-loop.mp3',
+  './assets/music/alien-spaceship-loop.mp3',
+  './assets/music/interstellar-space-loop.mp3',
 ];
 
 // Install: cache all assets
