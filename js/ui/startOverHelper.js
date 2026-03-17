@@ -1,11 +1,10 @@
-// startOverHelper.js — כפתור "חזרה להתחלה" משותף לכל מסכי המשחק
+// startOverHelper.js — כפתור "חזרה לתפריט" משותף לכל מסכי המשחק
 
 import UI from '../data/uiStrings.js';
-import gameState from '../systems/GameState.js';
 import audioManager from '../systems/AudioManager.js';
 
 /**
- * Creates a small home button that triggers the start-over confirmation dialog.
+ * Creates a small home button that triggers the back-to-menu confirmation dialog.
  * @param {object} game — the Game instance (for switchScene / overlay)
  * @returns {HTMLButtonElement}
  */
@@ -22,9 +21,9 @@ export function createStartOverButton(game) {
 }
 
 /**
- * Shows a confirmation overlay dialog before starting over.
+ * Shows a confirmation overlay dialog before leaving the current game.
  * Reuses the same pattern as MenuScene._showResetConfirm().
- * On confirm: clears race state, resets game, returns to setup.
+ * On confirm: returns to the main menu without resetting game state.
  * @param {object} game
  */
 export function showStartOverConfirm(game) {
@@ -60,9 +59,7 @@ export function showStartOverConfirm(game) {
 
   overlay.querySelector('#btn-startover-confirm').addEventListener('click', () => {
     audioManager.play('click');
-    gameState.clearRaceState();
-    gameState.reset();
     overlay.remove();
-    game.switchScene('setup');
+    game.switchScene('menu');
   });
 }
