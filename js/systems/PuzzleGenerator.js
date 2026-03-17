@@ -394,7 +394,7 @@ export function generatePuzzle(type, level, station = 5) {
     if (!usedQuestions.has(puzzle.question)) {
       usedQuestions.add(puzzle.question);
       // For commutative operations, also mark the swapped version as used
-      const commutative = getCommutativeQuestion(puzzle.type, puzzle.question);
+      const commutative = getCommutativeQuestion(type, puzzle.question);
       if (commutative) usedQuestions.add(commutative);
       return puzzle;
     }
@@ -402,7 +402,7 @@ export function generatePuzzle(type, level, station = 5) {
   // Fallback: return last generated puzzle even if duplicate
   if (puzzle) {
     usedQuestions.add(puzzle.question);
-    const commutative = getCommutativeQuestion(puzzle.type, puzzle.question);
+    const commutative = getCommutativeQuestion(type, puzzle.question);
     if (commutative) usedQuestions.add(commutative);
   }
   return puzzle;
