@@ -124,7 +124,7 @@ export default class SetupScene {
           </div>
         </div>
 
-        <button class="btn btn-big pulse" id="btn-go" style="display:${this.selectedMode ? '' : 'none'}">
+        <button class="btn btn-big pulse${this.selectedMode ? '' : ' hidden'}" id="btn-go">
           ${UI.setup.startButton} 🚀
         </button>
       </div>
@@ -197,7 +197,7 @@ export default class SetupScene {
         modeCards.forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.selectedMode = card.dataset.mode;
-        if (btnGo) btnGo.style.display = '';
+        if (btnGo) btnGo.classList.remove('hidden');
       });
     });
 
