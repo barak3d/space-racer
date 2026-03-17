@@ -362,6 +362,19 @@ function generateWordPuzzle(level, station) {
   );
 }
 
+// For commutative operations (addition, multiplication), generate the
+// swapped-operands version of the question so both orderings are treated as duplicates.
+function getCommutativeQuestion(type, question) {
+  if (type === 'addition') {
+    const match = question.match(/^(\d+) \+ (\d+) = \?$/);
+    if (match) return `${match[2]} + ${match[1]} = ?`;
+  } else if (type === 'multiplication') {
+    const match = question.match(/^(\d+) × (\d+) = \?$/);
+    if (match) return `${match[2]} × ${match[1]} = ?`;
+  }
+  return null;
+}
+
 // === Main Entry Point ===
 export function generatePuzzle(type, level, station = 5) {
   const generator = {
@@ -380,11 +393,18 @@ export function generatePuzzle(type, level, station = 5) {
     if (!puzzle) return null;
     if (!usedQuestions.has(puzzle.question)) {
       usedQuestions.add(puzzle.question);
+      // For commutative operations, also mark the swapped version as used
+      const commutative = getCommutativeQuestion(puzzle.type, puzzle.question);
+      if (commutative) usedQuestions.add(commutative);
       return puzzle;
     }
   }
   // Fallback: return last generated puzzle even if duplicate
-  if (puzzle) usedQuestions.add(puzzle.question);
+  if (puzzle) {
+    usedQuestions.add(puzzle.question);
+    const commutative = getCommutativeQuestion(puzzle.type, puzzle.question);
+    if (commutative) usedQuestions.add(commutative);
+  }
   return puzzle;
 }
 
