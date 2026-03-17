@@ -11,13 +11,13 @@ export default class SetupScene {
     this.ui = null;
     this.selectedColor = SHIP_COLORS[0].color;
     this.selectedLevel = 1;
-    this.selectedMode = GAME_MODES.practice;
+    this.selectedMode = null;
     this.editingProfile = false;
   }
 
   enter() {
     const state = gameState.getState();
-    this.selectedMode = state.gameMode || GAME_MODES.practice;
+    this.selectedMode = null;
     this.editingProfile = false;
 
     if (gameState.hasPlayerProfile()) {
@@ -124,7 +124,7 @@ export default class SetupScene {
           </div>
         </div>
 
-        <button class="btn btn-big pulse" id="btn-go">
+        <button class="btn btn-big pulse" id="btn-go" style="display:${this.selectedMode ? '' : 'none'}">
           ${UI.setup.startButton} 🚀
         </button>
       </div>
@@ -190,12 +190,14 @@ export default class SetupScene {
 
     // Mode selection
     const modeCards = this.ui.querySelectorAll('.mode-card');
+    const btnGo = this.ui.querySelector('#btn-go');
     modeCards.forEach(card => {
       card.addEventListener('click', () => {
         audioManager.play('click');
         modeCards.forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.selectedMode = card.dataset.mode;
+        if (btnGo) btnGo.style.display = '';
       });
     });
 
