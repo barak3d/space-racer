@@ -1,4 +1,4 @@
-// AudioManager.js — ניהול סאונד עם Web Audio API (סינתזה בלבד, ללא קבצים חיצוניים)
+// AudioManager.js — ניהול סאונד עם Web Audio API + קבצי מוזיקת רקע MP3
 
 class AudioManager {
   constructor() {
@@ -10,6 +10,12 @@ class AudioManager {
     this.bgMusicGain = null;
     this._currentMusicNotes = null;
     this._currentMusicTempo = 1.0;
+
+    // MP3 background music support
+    this._musicBuffers = {};     // cached AudioBuffer per file path
+    this._musicSource = null;    // currently playing AudioBufferSourceNode
+    this._currentMusicFile = null;
+    this._musicLoading = new Set();
 
     // Bind toggle button
     const btn = document.getElementById('sound-toggle');
@@ -59,19 +65,34 @@ class AudioManager {
     }
   }
 
-  startBgMusic() {
+  startBgMusic(musicFile) {
     if (!this.ctx) this._ensureContext();
-    if (this.bgMusic) return;
 
-    // Create a simple ambient space loop using oscillators
-    this.bgMusicGain = this.ctx.createGain();
-    this.bgMusicGain.gain.value = this.muted ? 0 : 0.15;
-    this.bgMusicGain.connect(this.ctx.destination);
+    // Create gain node if not yet created
+    if (!this.bgMusicGain) {
+      this.bgMusicGain = this.ctx.createGain();
+      this.bgMusicGain.gain.value = this.muted ? 0 : 0.15;
+      this.bgMusicGain.connect(this.ctx.destination);
+    }
 
-    this._loopAmbient();
+    // If a music file path is provided, play it
+    if (musicFile) {
+      this._playMusicFile(musicFile);
+    } else if (!this.bgMusic && !this._musicSource) {
+      // Fallback to synthesized ambient
+      this._loopAmbient();
+    }
   }
 
   stopBgMusic() {
+    // Stop MP3 source
+    if (this._musicSource) {
+      try { this._musicSource.stop(); } catch (e) { /* ignore */ }
+      this._musicSource = null;
+    }
+    this._currentMusicFile = null;
+
+    // Stop synthesized oscillator
     if (this.bgMusic) {
       try { this.bgMusic.stop(); } catch (e) { /* ignore */ }
       this.bgMusic = null;
@@ -79,16 +100,107 @@ class AudioManager {
   }
 
   setStationMusic(theme) {
-    this.stopBgMusic();
-    if (!theme) return;
+    if (!theme) {
+      this.stopBgMusic();
+      return;
+    }
 
     this._currentMusicNotes = theme.musicNotes || null;
     this._currentMusicTempo = theme.musicTempo || 1.0;
 
-    // Restart ambient loop with new notes/tempo
-    if (!this.muted && this.bgMusicGain) {
-      this._loopAmbient();
+    // If theme has an MP3 file, switch to it
+    if (theme.musicFile) {
+      // Don't restart if already playing this file
+      if (this._currentMusicFile === theme.musicFile && this._musicSource) return;
+      this.stopBgMusic();
+      if (!this.bgMusicGain) {
+        this._ensureContext();
+        this.bgMusicGain = this.ctx.createGain();
+        this.bgMusicGain.gain.value = this.muted ? 0 : 0.15;
+        this.bgMusicGain.connect(this.ctx.destination);
+      }
+      this._playMusicFile(theme.musicFile);
+    } else {
+      this.stopBgMusic();
+      if (!this.muted && this.bgMusicGain) {
+        this._loopAmbient();
+      }
     }
+  }
+
+  // Preload music files so they are ready to play instantly
+  preloadMusic(filePaths) {
+    if (!this.ctx) this._ensureContext();
+    filePaths.forEach((path) => this._loadMusicBuffer(path));
+  }
+
+  _loadMusicBuffer(filePath) {
+    if (this._musicBuffers[filePath] || this._musicLoading.has(filePath)) return;
+    this._musicLoading.add(filePath);
+
+    fetch(filePath)
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.arrayBuffer();
+      })
+      .then((arrayBuffer) => this.ctx.decodeAudioData(arrayBuffer))
+      .then((audioBuffer) => {
+        this._musicBuffers[filePath] = audioBuffer;
+        this._musicLoading.delete(filePath);
+
+        // If this file was requested while loading, start playing now
+        if (this._currentMusicFile === filePath && !this._musicSource) {
+          this._startMusicSource(filePath);
+        }
+      })
+      .catch((err) => {
+        this._musicLoading.delete(filePath);
+        console.warn('AudioManager: failed to load music', filePath, err.message);
+      });
+  }
+
+  _playMusicFile(filePath) {
+    this._currentMusicFile = filePath;
+
+    if (this._musicBuffers[filePath]) {
+      // Buffer already loaded — play immediately
+      this._startMusicSource(filePath);
+    } else {
+      // Load the file, then play (fallback to synth while loading)
+      this._loadMusicBuffer(filePath);
+      if (!this.bgMusic) {
+        this._loopAmbient();
+      }
+    }
+  }
+
+  _startMusicSource(filePath) {
+    if (!this.ctx || this.ctx.state === 'closed') return;
+    if (!this._musicBuffers[filePath]) return;
+
+    // Stop any existing sources
+    if (this._musicSource) {
+      try { this._musicSource.stop(); } catch (e) { /* ignore */ }
+    }
+    if (this.bgMusic) {
+      try { this.bgMusic.stop(); } catch (e) { /* ignore */ }
+      this.bgMusic = null;
+    }
+
+    const source = this.ctx.createBufferSource();
+    source.buffer = this._musicBuffers[filePath];
+    source.loop = true;
+    source.connect(this.bgMusicGain);
+    source.start(0);
+
+    this._musicSource = source;
+
+    // Clean up on end (e.g. if stop() is called)
+    source.onended = () => {
+      if (this._musicSource === source) {
+        this._musicSource = null;
+      }
+    };
   }
 
   _loopAmbient() {
@@ -122,7 +234,8 @@ class AudioManager {
       if (i === 0) {
         this.bgMusic = osc;
         osc.onended = () => {
-          if (!this.muted) this._loopAmbient();
+          // Only continue synth loop if no MP3 source is playing
+          if (!this.muted && !this._musicSource) this._loopAmbient();
         };
       }
     });

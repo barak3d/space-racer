@@ -4,7 +4,7 @@ import UI from '../data/uiStrings.js';
 import StarField from '../entities/StarField.js';
 import audioManager from '../systems/AudioManager.js';
 import gameState from '../systems/GameState.js';
-import { GAME_SETTINGS, DIFFICULTY_LEVELS } from '../config.js';
+import { GAME_SETTINGS, DIFFICULTY_LEVELS, STATION_THEMES } from '../config.js';
 import cloudLeaderboard from '../systems/CloudLeaderboard.js';
 import Alien from '../entities/Alien.js';
 import alienEffects from '../systems/AlienEffects.js';
@@ -113,7 +113,11 @@ export default class MenuScene {
       this._showResetConfirm();
     });
 
-    audioManager.startBgMusic();
+    // Preload all station music files for seamless transitions
+    const musicFiles = STATION_THEMES.map(t => t.musicFile).filter(Boolean);
+    audioManager.preloadMusic(musicFiles);
+
+    audioManager.startBgMusic(STATION_THEMES[0]?.musicFile);
   }
 
   _showResetConfirm() {

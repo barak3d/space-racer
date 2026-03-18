@@ -126,6 +126,7 @@ export const STATION_THEMES = [
     accentColor: '#00aaff',
     musicNotes: [130.81, 164.81, 196.00, 261.63],
     musicTempo: 1.0,
+    musicFile: './assets/music/space-ambience-loop.mp3',
   },
   {
     name: 'שדה האסטרואידים',
@@ -135,6 +136,7 @@ export const STATION_THEMES = [
     accentColor: '#cc55ff',
     musicNotes: [146.83, 174.61, 220.00, 293.66],
     musicTempo: 1.15,
+    musicFile: './assets/music/deep-tones-loop.mp3',
   },
   {
     name: 'הענן הירוק',
@@ -144,6 +146,7 @@ export const STATION_THEMES = [
     accentColor: '#33ff77',
     musicNotes: [164.81, 196.00, 246.94, 329.63],
     musicTempo: 1.05,
+    musicFile: './assets/music/calm-cold-space-loop.mp3',
   },
   {
     name: 'סופת השמש',
@@ -153,6 +156,7 @@ export const STATION_THEMES = [
     accentColor: '#ff8833',
     musicNotes: [196.00, 246.94, 293.66, 392.00],
     musicTempo: 1.25,
+    musicFile: './assets/music/alien-spaceship-loop.mp3',
   },
   {
     name: 'שער הגלקסיה',
@@ -162,5 +166,6 @@ export const STATION_THEMES = [
     accentColor: '#ff44cc',
     musicNotes: [220.00, 261.63, 329.63, 440.00],
     musicTempo: 1.35,
+    musicFile: './assets/music/interstellar-space-loop.mp3',
   },
 ];
