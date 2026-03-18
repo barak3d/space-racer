@@ -2,11 +2,16 @@
 
 import { DIFFICULTY_LEVELS, PUZZLE_TYPES, STATION_SCALE, STATION_TIME_OFFSET } from '../config.js';
 import { getRandomWord, getAllWords, resetUsedWords } from '../data/hebrewWords.js';
+import COMMON_HEBREW_WORDS from '../data/commonHebrewWords.js';
 
-// Pre-compute base-letter forms of every word in the bank once at module load.
-// Used by generateWordPuzzle to reject wrong-letter candidates that would form
-// another valid word when placed at the blank position.
-const ALL_BASE_WORD_FORMS = new Set(getAllWords().map(w => w.word.replace(/[\u0591-\u05C7]/g, '')));
+// Pre-compute base-letter forms of every word in the bank, then merge with the
+// comprehensive common Hebrew words list.  This ensures that wrong-letter
+// candidates never accidentally form *any* common Hebrew word — not just the
+// ones that appear in the game's own word bank.
+const ALL_BASE_WORD_FORMS = new Set([
+  ...getAllWords().map(w => w.word.replace(/[\u0591-\u05C7]/g, '')),
+  ...COMMON_HEBREW_WORDS,
+]);
 
 // Track used questions across all puzzle types within a game session
 const usedQuestions = new Set();
