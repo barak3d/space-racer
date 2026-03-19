@@ -252,7 +252,11 @@ function generateSequence(level, station) {
   const steps = cfg.sequence.steps;
   // Limit available steps by station: station 1 uses fewer step options, station 5 uses all
   const availableCount = Math.max(1, Math.ceil(steps.length * scale));
-  const availableSteps = steps.slice(0, availableCount);
+  let availableSteps = steps.slice(0, availableCount);
+  // At harder stations (4-5, scale > 0.7), drop the easiest step to force larger jumps
+  if (scale > 0.7 && availableSteps.length > 1) {
+    availableSteps = availableSteps.slice(1);
+  }
   const step = availableSteps[Math.floor(Math.random() * availableSteps.length)];
 
   const scaledMax = Math.max(step * 5 + 1, Math.floor(cfg.sequence.max * scale));
